@@ -5,7 +5,21 @@ const db = require('../config/db');
 // Set test environment
 process.env.NODE_ENV = 'test';
 
+// Helper function to create a user and get auth token
+async function getAuthToken() {
+  const response = await request(app)
+    .post('/api/auth/register')
+    .send({
+      username: `testuser_${Date.now()}`,
+      email: `test_${Date.now()}@example.com`,
+      password: 'password123'
+    });
+  
+  return response.body.data.token;
+}
+
 describe('Character API Endpoints', () => {
+  let authToken;
   
   // Setup: Tables are automatically created by db.js
   beforeAll(async () => {
@@ -14,8 +28,14 @@ describe('Character API Endpoints', () => {
 
   // Clean up database before each test
   beforeEach(async () => {
+    await db.query('DELETE FROM ratings');
+    await db.query('DELETE FROM favorites');
+    await db.query('DELETE FROM users');
     await db.query('DELETE FROM characters');
     await db.query('DELETE FROM anime');
+    
+    // Get a fresh auth token for protected routes
+    authToken = await getAuthToken();
   });
 
   // Close database connection after all tests
@@ -105,6 +125,7 @@ describe('Character API Endpoints', () => {
 
       const response = await request(app)
         .post(`/api/anime/${animeId}/characters`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send(newCharacter);
       
       expect(response.status).toBe(201);
@@ -120,6 +141,7 @@ describe('Character API Endpoints', () => {
 
       const response = await request(app)
         .post(`/api/anime/${animeId}/characters`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({});
       
       expect(response.status).toBe(400);
@@ -130,6 +152,7 @@ describe('Character API Endpoints', () => {
     test('Should return 404 when anime does not exist', async () => {
       const response = await request(app)
         .post('/api/anime/9999/characters')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Test Character' });
       
       expect(response.status).toBe(404);
@@ -148,6 +171,7 @@ describe('Character API Endpoints', () => {
 
       const response = await request(app)
         .put(`/api/anime/${animeId}/characters/${characterId}`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Light Yagami' });
       
       expect(response.status).toBe(200);
@@ -162,6 +186,7 @@ describe('Character API Endpoints', () => {
 
       const response = await request(app)
         .put(`/api/anime/${animeId}/characters/9999`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Test' });
       
       expect(response.status).toBe(404);
@@ -176,6 +201,7 @@ describe('Character API Endpoints', () => {
 
       const response = await request(app)
         .put(`/api/anime/${animeId}/characters/${charResult.insertId}`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({});
       
       expect(response.status).toBe(400);
@@ -191,7 +217,9 @@ describe('Character API Endpoints', () => {
       const [charResult] = await db.query('INSERT INTO characters (name, anime_id) VALUES (?, ?)', ['To Delete', animeId]);
       const characterId = charResult.insertId;
 
-      const response = await request(app).delete(`/api/anime/${animeId}/characters/${characterId}`);
+      const response = await request(app)
+        .delete(`/api/anime/${animeId}/characters/${characterId}`)
+        .set('Authorization', `Bearer ${authToken}`);
       
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -202,7 +230,9 @@ describe('Character API Endpoints', () => {
       const [animeResult] = await db.query('INSERT INTO anime (name) VALUES (?)', ['Test Anime']);
       const animeId = animeResult.insertId;
 
-      const response = await request(app).delete(`/api/anime/${animeId}/characters/9999`);
+      const response = await request(app)
+        .delete(`/api/anime/${animeId}/characters/9999`)
+        .set('Authorization', `Bearer ${authToken}`);
       
       expect(response.status).toBe(404);
       expect(response.body.success).toBe(false);
@@ -210,7 +240,9 @@ describe('Character API Endpoints', () => {
     });
 
     test('Should return 404 when anime does not exist', async () => {
-      const response = await request(app).delete('/api/anime/9999/characters/1');
+      const response = await request(app)
+        .delete('/api/anime/9999/characters/1')
+        .set('Authorization', `Bearer ${authToken}`);
       
       expect(response.status).toBe(404);
       expect(response.body.success).toBe(false);

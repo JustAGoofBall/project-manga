@@ -39,6 +39,47 @@ function initDatabase() {
       )
     `);
 
+    // Create users table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create ratings table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS ratings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        anime_id INTEGER NOT NULL,
+        rating INTEGER CHECK (rating BETWEEN 1 AND 10),
+        review TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE,
+        UNIQUE (user_id, anime_id)
+      )
+    `);
+
+    // Create favorites table
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS favorites (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        anime_id INTEGER NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE,
+        UNIQUE (user_id, anime_id)
+      )
+    `);
+
     // Create trigger for anime updated_at
     db.exec(`
       CREATE TRIGGER IF NOT EXISTS anime_updated_at 
@@ -54,6 +95,24 @@ function initDatabase() {
       AFTER UPDATE ON characters
       BEGIN
         UPDATE characters SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+      END
+    `);
+
+    // Create trigger for users updated_at
+    db.exec(`
+      CREATE TRIGGER IF NOT EXISTS users_updated_at 
+      AFTER UPDATE ON users
+      BEGIN
+        UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
+      END
+    `);
+
+    // Create trigger for ratings updated_at
+    db.exec(`
+      CREATE TRIGGER IF NOT EXISTS ratings_updated_at 
+      AFTER UPDATE ON ratings
+      BEGIN
+        UPDATE ratings SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
       END
     `);
 

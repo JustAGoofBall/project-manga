@@ -5,7 +5,21 @@ const db = require('../config/db');
 // Set test environment
 process.env.NODE_ENV = 'test';
 
+// Helper function to create a user and get auth token
+async function getAuthToken() {
+  const response = await request(app)
+    .post('/api/auth/register')
+    .send({
+      username: `testuser_${Date.now()}`,
+      email: `test_${Date.now()}@example.com`,
+      password: 'password123'
+    });
+  
+  return response.body.data.token;
+}
+
 describe('Anime API Endpoints', () => {
+  let authToken;
   
   // Setup: Tables are automatically created by db.js
   beforeAll(async () => {
@@ -14,8 +28,14 @@ describe('Anime API Endpoints', () => {
 
   // Clean up database before each test
   beforeEach(async () => {
+    await db.query('DELETE FROM ratings');
+    await db.query('DELETE FROM favorites');
+    await db.query('DELETE FROM users');
     await db.query('DELETE FROM characters');
     await db.query('DELETE FROM anime');
+    
+    // Get a fresh auth token for protected routes
+    authToken = await getAuthToken();
   });
 
   // Close database connection after all tests
@@ -84,6 +104,7 @@ describe('Anime API Endpoints', () => {
       
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send(newAnime);
       
       expect(response.status).toBe(201);
@@ -96,6 +117,7 @@ describe('Anime API Endpoints', () => {
     test('Should return 400 when name is missing', async () => {
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({});
       
       expect(response.status).toBe(400);
@@ -108,6 +130,7 @@ describe('Anime API Endpoints', () => {
       
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'My Hero Academia' });
       
       expect(response.status).toBe(409);
@@ -124,6 +147,7 @@ describe('Anime API Endpoints', () => {
 
       const response = await request(app)
         .put(`/api/anime/${animeId}`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'New Name' });
       
       expect(response.status).toBe(200);
@@ -135,6 +159,7 @@ describe('Anime API Endpoints', () => {
     test('Should return 404 when updating non-existent anime', async () => {
       const response = await request(app)
         .put('/api/anime/9999')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Test' });
       
       expect(response.status).toBe(404);
@@ -147,6 +172,7 @@ describe('Anime API Endpoints', () => {
       
       const response = await request(app)
         .put(`/api/anime/${result.insertId}`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({});
       
       expect(response.status).toBe(400);
@@ -160,7 +186,9 @@ describe('Anime API Endpoints', () => {
       const [result] = await db.query('INSERT INTO anime (name) VALUES (?)', ['To Delete']);
       const animeId = result.insertId;
 
-      const response = await request(app).delete(`/api/anime/${animeId}`);
+      const response = await request(app)
+        .delete(`/api/anime/${animeId}`)
+        .set('Authorization', `Bearer ${authToken}`);
       
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
@@ -168,7 +196,9 @@ describe('Anime API Endpoints', () => {
     });
 
     test('Should return 404 when deleting non-existent anime', async () => {
-      const response = await request(app).delete('/api/anime/9999');
+      const response = await request(app)
+        .delete('/api/anime/9999')
+        .set('Authorization', `Bearer ${authToken}`);
       
       expect(response.status).toBe(404);
       expect(response.body.success).toBe(false);
@@ -181,7 +211,9 @@ describe('Anime API Endpoints', () => {
       await db.query('INSERT INTO characters (name, anime_id) VALUES (?, ?)', ['Character 1', animeId]);
       await db.query('INSERT INTO characters (name, anime_id) VALUES (?, ?)', ['Character 2', animeId]);
 
-      await request(app).delete(`/api/anime/${animeId}`);
+      await request(app)
+        .delete(`/api/anime/${animeId}`)
+        .set('Authorization', `Bearer ${authToken}`);
       
       const [characters] = await db.query('SELECT * FROM characters WHERE anime_id = ?', [animeId]);
       expect(characters).toHaveLength(0);

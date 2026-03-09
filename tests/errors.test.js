@@ -5,7 +5,21 @@ const db = require('../config/db');
 // Set test environment
 process.env.NODE_ENV = 'test';
 
+// Helper function to create a user and get auth token
+async function getAuthToken() {
+  const response = await request(app)
+    .post('/api/auth/register')
+    .send({
+      username: `testuser_${Date.now()}`,
+      email: `test_${Date.now()}@example.com`,
+      password: 'password123'
+    });
+  
+  return response.body.data.token;
+}
+
 describe('Error Handling and Edge Cases', () => {
+  let authToken;
   
   // Setup: Tables are automatically created by db.js
   beforeAll(async () => {
@@ -14,8 +28,14 @@ describe('Error Handling and Edge Cases', () => {
 
   // Clean up database before each test
   beforeEach(async () => {
+    await db.query('DELETE FROM ratings');
+    await db.query('DELETE FROM favorites');
+    await db.query('DELETE FROM users');
     await db.query('DELETE FROM characters');
     await db.query('DELETE FROM anime');
+    
+    // Get a fresh auth token for protected routes
+    authToken = await getAuthToken();
   });
 
   // Close database connection after all tests
@@ -36,6 +56,7 @@ describe('Error Handling and Edge Cases', () => {
     test('PUT non-existent anime should return 404', async () => {
       const response = await request(app)
         .put('/api/anime/999999')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Test' });
       
       expect(response.status).toBe(404);
@@ -44,7 +65,9 @@ describe('Error Handling and Edge Cases', () => {
     });
 
     test('DELETE non-existent anime should return 404', async () => {
-      const response = await request(app).delete('/api/anime/999999');
+      const response = await request(app)
+        .delete('/api/anime/999999')
+        .set('Authorization', `Bearer ${authToken}`);
       
       expect(response.status).toBe(404);
       expect(response.body.success).toBe(false);
@@ -61,6 +84,7 @@ describe('Error Handling and Edge Cases', () => {
     test('POST character to non-existent anime should return 404', async () => {
       const response = await request(app)
         .post('/api/anime/999999/characters')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Test Character' });
       
       expect(response.status).toBe(404);
@@ -73,6 +97,7 @@ describe('Error Handling and Edge Cases', () => {
     test('POST anime without name should return 400', async () => {
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({});
       
       expect(response.status).toBe(400);
@@ -83,6 +108,7 @@ describe('Error Handling and Edge Cases', () => {
     test('POST anime with empty name should return 400', async () => {
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: '' });
       
       expect(response.status).toBe(400);
@@ -95,6 +121,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .put(`/api/anime/${result.insertId}`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({});
       
       expect(response.status).toBe(400);
@@ -106,6 +133,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .post(`/api/anime/${result.insertId}/characters`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({});
       
       expect(response.status).toBe(400);
@@ -118,6 +146,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .post(`/api/anime/${result.insertId}/characters`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: '' });
       
       expect(response.status).toBe(400);
@@ -147,6 +176,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Duplicate Name' });
       
       expect(response.status).toBe(409);
@@ -160,6 +190,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .put(`/api/anime/${result.insertId}`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Existing Name' });
       
       expect(response.status).toBe(409);
@@ -191,6 +222,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: longName });
       
       // Validators now enforce max length of 100 characters
@@ -202,6 +234,7 @@ describe('Error Handling and Edge Cases', () => {
     test('Should handle malformed JSON gracefully', async () => {
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .set('Content-Type', 'application/json')
         .send('{ invalid json }');
       
@@ -216,6 +249,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: specialName });
       
       expect(response.status).toBe(201);
@@ -228,6 +262,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .post(`/api/anime/${animeResult.insertId}/characters`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: specialName });
       
       expect(response.status).toBe(201);
@@ -239,6 +274,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: unicodeName });
       
       expect(response.status).toBe(201);
@@ -259,6 +295,7 @@ describe('Error Handling and Edge Cases', () => {
       
       const response = await request(app)
         .put(`/api/anime/${result.insertId}`)
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'Same Name' });
       
       // Should either succeed (200) or detect no change
@@ -289,6 +326,7 @@ describe('Error Handling and Edge Cases', () => {
     test('Created resources should return 201 status', async () => {
       const response = await request(app)
         .post('/api/anime')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ name: 'New Anime' });
       
       expect(response.status).toBe(201);
