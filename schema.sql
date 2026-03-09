@@ -20,6 +20,41 @@ CREATE TABLE IF NOT EXISTS characters (
   FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE
 );
 
+-- Create users table
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create ratings table
+CREATE TABLE IF NOT EXISTS ratings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  anime_id INT NOT NULL,
+  rating INT CHECK (rating BETWEEN 1 AND 10),
+  review TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_user_anime (user_id, anime_id)
+);
+
+-- Create favorites table
+CREATE TABLE IF NOT EXISTS favorites (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  anime_id INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_user_favorite (user_id, anime_id)
+);
+
 -- Insert sample data
 INSERT INTO anime (name) VALUES 
   ('Naruto'),

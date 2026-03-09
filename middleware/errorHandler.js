@@ -18,8 +18,8 @@ const notFound = (req, res, next) => {
  * Handles all errors and sends appropriate response
  */
 const errorHandler = (err, req, res, next) => {
-  // If statusCode is 200, something went wrong, set it to 500
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  // Use error's status property, or res.statusCode, defaulting to 500
+  const statusCode = err.status || err.statusCode || (res.statusCode !== 200 ? res.statusCode : 500);
   
   res.status(statusCode);
   

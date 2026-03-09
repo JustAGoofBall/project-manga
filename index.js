@@ -9,6 +9,7 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 const animeRoutes = require('./routes/anime');
 const characterRoutes = require('./routes/characters');
 const searchRoutes = require('./routes/search');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,28 +26,41 @@ app.get('/', (req, res) => {
     message: 'Welcome to the Anime Characters API',
     version: '2.0.0',
     endpoints: {
+      auth: {
+        'POST /api/auth/register': 'Register a new user (body: {username, email, password})',
+        'POST /api/auth/login': 'Login user (body: {email, password})',
+        'GET /api/auth/me': 'Get current user profile (requires authentication)',
+        'PUT /api/auth/me': 'Update current user profile (requires authentication)',
+        'DELETE /api/auth/me': 'Delete current user account (requires authentication)'
+      },
       anime: {
         'GET /api/anime': 'Get all anime with characters',
         'GET /api/anime/:id': 'Get a specific anime by ID',
-        'POST /api/anime': 'Create a new anime (body: {name})',
-        'PUT /api/anime/:id': 'Update an anime (body: {name})',
-        'DELETE /api/anime/:id': 'Delete an anime'
+        'POST /api/anime': 'Create a new anime (body: {name}) [AUTH REQUIRED]',
+        'PUT /api/anime/:id': 'Update an anime (body: {name}) [AUTH REQUIRED]',
+        'DELETE /api/anime/:id': 'Delete an anime [AUTH REQUIRED]'
       },
       characters: {
         'GET /api/anime/:animeId/characters': 'Get all characters from an anime',
         'GET /api/anime/:animeId/characters/:characterId': 'Get a specific character',
-        'POST /api/anime/:animeId/characters': 'Create a new character (body: {name})',
-        'PUT /api/anime/:animeId/characters/:characterId': 'Update a character (body: {name})',
-        'DELETE /api/anime/:animeId/characters/:characterId': 'Delete a character'
+        'POST /api/anime/:animeId/characters': 'Create a new character (body: {name}) [AUTH REQUIRED]',
+        'PUT /api/anime/:animeId/characters/:characterId': 'Update a character (body: {name}) [AUTH REQUIRED]',
+        'DELETE /api/anime/:animeId/characters/:characterId': 'Delete a character [AUTH REQUIRED]'
       },
       search: {
         'GET /api/search?q=name': 'Search for anime by name'
       }
+    },
+    authentication: {
+      note: 'Protected endpoints require authentication',
+      header: 'Authorization: Bearer <your-jwt-token>',
+      howTo: '1. Register or login to get a token, 2. Add token to Authorization header'
     }
   });
 });
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/anime', animeRoutes);
 app.use('/api/anime/:animeId/characters', characterRoutes);
 app.use('/api/search', searchRoutes);
