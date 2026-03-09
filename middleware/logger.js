@@ -77,7 +77,7 @@ const logger = (req, res, next) => {
   writeToFile(LOG_LEVELS.INFO, `REQUEST - ${requestLog}`);
   
   // Log request body for POST, PUT, PATCH
-  if (['POST', 'PUT', 'PATCH'].includes(req.method) && Object.keys(req.body).length > 0) {
+  if (['POST', 'PUT', 'PATCH'].includes(req.method) && req.body && Object.keys(req.body).length > 0) {
     const bodyLog = `Body: ${JSON.stringify(req.body)}`;
     console.log(`\x1b[90m  ${bodyLog}\x1b[0m`);
     writeToFile(LOG_LEVELS.INFO, `  ${bodyLog}`);

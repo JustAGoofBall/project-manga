@@ -10,6 +10,9 @@ const animeRoutes = require('./routes/anime');
 const characterRoutes = require('./routes/characters');
 const searchRoutes = require('./routes/search');
 const authRoutes = require('./routes/auth');
+const ratingRoutes = require('./routes/ratings');
+const myRatingsRoutes = require('./routes/myRatings');
+const favoriteRoutes = require('./routes/favorites');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +50,18 @@ app.get('/', (req, res) => {
         'PUT /api/anime/:animeId/characters/:characterId': 'Update a character (body: {name}) [AUTH REQUIRED]',
         'DELETE /api/anime/:animeId/characters/:characterId': 'Delete a character [AUTH REQUIRED]'
       },
+      ratings: {
+        'GET /api/anime/:animeId/ratings': 'Get ratings for an anime (includes average score)',
+        'POST /api/anime/:animeId/ratings': 'Rate an anime (body: {rating, review?}) [AUTH REQUIRED]',
+        'PUT /api/anime/:animeId/ratings/:ratingId': 'Update own rating [AUTH REQUIRED]',
+        'DELETE /api/anime/:animeId/ratings/:ratingId': 'Delete own rating [AUTH REQUIRED]',
+        'GET /api/ratings/me': 'Get your own ratings [AUTH REQUIRED]'
+      },
+      favorites: {
+        'GET /api/favorites': 'Get your favorites [AUTH REQUIRED]',
+        'POST /api/favorites/:animeId': 'Add anime to favorites [AUTH REQUIRED]',
+        'DELETE /api/favorites/:animeId': 'Remove anime from favorites [AUTH REQUIRED]'
+      },
       search: {
         'GET /api/search?q=name': 'Search for anime by name'
       }
@@ -63,6 +78,9 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/anime', animeRoutes);
 app.use('/api/anime/:animeId/characters', characterRoutes);
+app.use('/api/anime/:animeId/ratings', ratingRoutes);
+app.use('/api/ratings', myRatingsRoutes);
+app.use('/api/favorites', favoriteRoutes);
 app.use('/api/search', searchRoutes);
 
 // ========== ERROR HANDLING ==========
