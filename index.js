@@ -8,21 +8,21 @@ const logger = require('./middleware/logger');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 // ========== RATE LIMITERS ==========
-// General limiter: 100 requests per 15 minutes
+// General limiter: 100 requests per 15 minutes (production only)
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  skip: () => process.env.NODE_ENV === 'test',
+  skip: () => process.env.NODE_ENV !== 'production',
   message: { success: false, message: 'Too many requests, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false
 });
 
-// Auth limiter: 10 requests per 15 minutes (brute force protection)
+// Auth limiter: 10 requests per 15 minutes (production only)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  skip: () => process.env.NODE_ENV === 'test',
+  skip: () => process.env.NODE_ENV !== 'production',
   message: { success: false, message: 'Too many login attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false
