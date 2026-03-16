@@ -18,6 +18,7 @@ export default function Navbar() {
         {user ? (
           <>
             <Link to="/favorites" style={styles.link}>Mijn Favorieten</Link>
+            {user.is_admin && <span style={styles.adminBadge}>👑 Admin</span>}
             <span style={styles.username}>👤 {user.username}</span>
             <button onClick={handleLogout} style={styles.button}>Uitloggen</button>
           </>
@@ -59,6 +60,14 @@ const styles = {
   username: {
     color: '#68d391',
     fontSize: '0.9rem',
+  },
+  adminBadge: {
+    background: '#d4a574',
+    color: '#1a1a2e',
+    fontSize: '0.8rem',
+    fontWeight: 'bold',
+    padding: '0.3rem 0.6rem',
+    borderRadius: '4px',
   },
   button: {
     background: '#e53e3e',

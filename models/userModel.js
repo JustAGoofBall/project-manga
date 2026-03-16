@@ -12,7 +12,7 @@ class User {
    */
   static async getAll() {
     const [users] = await db.query(
-      'SELECT id, username, email, created_at, updated_at FROM users'
+      'SELECT id, username, email, is_admin, created_at, updated_at FROM users'
     );
     return users;
   }
@@ -24,7 +24,7 @@ class User {
    */
   static async getById(id) {
     const [users] = await db.query(
-      'SELECT id, username, email, created_at, updated_at FROM users WHERE id = ?',
+      'SELECT id, username, email, is_admin, created_at, updated_at FROM users WHERE id = ?',
       [id]
     );
     return users.length > 0 ? users[0] : null;
@@ -37,7 +37,7 @@ class User {
    */
   static async getByEmail(email) {
     const [users] = await db.query(
-      'SELECT id, username, email, password_hash, created_at FROM users WHERE email = ?',
+      'SELECT id, username, email, is_admin, password_hash, created_at FROM users WHERE email = ?',
       [email]
     );
     return users.length > 0 ? users[0] : null;
@@ -50,7 +50,7 @@ class User {
    */
   static async getByUsername(username) {
     const [users] = await db.query(
-      'SELECT id, username, email, password_hash, created_at FROM users WHERE username = ?',
+      'SELECT id, username, email, is_admin, password_hash, created_at FROM users WHERE username = ?',
       [username]
     );
     return users.length > 0 ? users[0] : null;

@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-t
 /**
  * Authentication Middleware
  * Verifies JWT token and attaches user to request
- * 
+ *
  * Usage: Add this middleware to protected routes
  * Example: router.post('/anime', authMiddleware, animeController.createAnime);
  */
@@ -48,7 +48,8 @@ const authMiddleware = (req, res, next) => {
     req.user = {
       id: decoded.id,
       username: decoded.username,
-      email: decoded.email
+      email: decoded.email,
+      is_admin: decoded.is_admin || 0
     };
 
     // Continue to next middleware/controller
@@ -97,7 +98,8 @@ const optionalAuth = (req, res, next) => {
     req.user = {
       id: decoded.id,
       username: decoded.username,
-      email: decoded.email
+      email: decoded.email,
+      is_admin: decoded.is_admin || 0
     };
 
     next();
@@ -107,4 +109,27 @@ const optionalAuth = (req, res, next) => {
   }
 };
 
-module.exports = { authMiddleware, optionalAuth };
+/**
+ * Admin Middleware
+ * Checks if user is authenticated AND is an admin
+ * Must be used AFTER authMiddleware
+ */
+const adminMiddleware = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required'
+    });
+  }
+
+  if (!req.user.is_admin) {
+    return res.status(403).json({
+      success: false,
+      message: 'Admin access required'
+    });
+  }
+
+  next();
+};
+
+module.exports = { authMiddleware, optionalAuth, adminMiddleware };
