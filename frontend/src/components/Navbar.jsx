@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AnimeLogoSvg from '../assets/Anime-Logo.svg';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -12,7 +13,10 @@ export default function Navbar() {
 
   return (
     <nav style={styles.nav}>
-      <Link to="/" style={styles.brand}>🎌 Anime API</Link>
+      <Link to="/" style={styles.brand}>
+        <img src={AnimeLogoSvg} alt="Anime Logo" style={styles.logo} />
+        Anime API
+      </Link>
       <div style={styles.links}>
         <Link to="/" style={styles.link}>Anime</Link>
         {user ? (
@@ -52,6 +56,13 @@ const styles = {
     textDecoration: 'none',
     fontSize: '1.25rem',
     fontWeight: 'bold',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+  },
+  logo: {
+    height: '40px',
+    width: 'auto',
   },
   links: {
     display: 'flex',
