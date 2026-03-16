@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function AnimeDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user, authFetch } = useAuth();
 
   const [anime, setAnime] = useState(null);
@@ -91,6 +92,7 @@ export default function AnimeDetail() {
     <div style={styles.page}>
       <div style={styles.header}>
         <div>
+          <button onClick={() => navigate(-1)} style={styles.backBtn}>← Terug</button>
           <h1 style={styles.title}>{anime.name}</h1>
           {avg && <p style={styles.avg}>⭐ Gemiddeld: {avg} / 10 ({ratings.length} reviews)</p>}
         </div>
@@ -165,6 +167,7 @@ export default function AnimeDetail() {
 const styles = {
   page: { maxWidth: '800px', margin: '0 auto', padding: '2rem 1rem' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' },
+  backBtn: { padding: '0.5rem 1rem', background: '#4a5568', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginBottom: '0.5rem', fontSize: '0.9rem' },
   title: { margin: 0 },
   avg: { color: '#718096', marginTop: '0.5rem' },
   favBtn: { color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '500' },
