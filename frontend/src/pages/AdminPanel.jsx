@@ -134,7 +134,6 @@ export default function AdminPanel() {
 
       setSuccess('Karakter toegevoegd');
       setCharacterName('');
-      setSelectedAnimeId('');
       loadCharacters();
     } catch (e) {
       setError(e.message);
