@@ -36,6 +36,7 @@ const authRoutes = require('./routes/auth');
 const ratingRoutes = require('./routes/ratings');
 const myRatingsRoutes = require('./routes/myRatings');
 const favoriteRoutes = require('./routes/favorites');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -48,6 +49,30 @@ app.use('/api', generalLimiter);       // Rate limiting on all API routes
 app.use('/api/auth', authLimiter);     // Stricter limit on auth routes
 
 // ========== ROUTES ==========
+
+// Debug endpoint - check user is_admin status
+app.get('/api/debug/user/:username', async (req, res) => {
+  try {
+    const User = require('./models/userModel');
+    const user = await User.getByUsername(req.params.username);
+    if (!user) {
+      return res.json({ message: 'User not found', username: req.params.username });
+    }
+    res.json({
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        is_admin: user.is_admin,
+        is_admin_type: typeof user.is_admin,
+        is_admin_value: user.is_admin === 1 ? 'admin' : 'not admin'
+      }
+    });
+  } catch (e) {
+    res.json({ error: e.message });
+  }
+});
 
 // Root route - API documentation
 app.get('/', (req, res) => {
@@ -108,6 +133,7 @@ app.use('/api/anime/:animeId/ratings', ratingRoutes);
 app.use('/api/ratings', myRatingsRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/admin', adminRoutes);
 
 // ========== ERROR HANDLING ==========
 app.use(notFound); // 404 handler

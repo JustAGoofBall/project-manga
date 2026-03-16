@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AnimeDetail from './pages/AnimeDetail';
 import Favorites from './pages/Favorites';
+import AdminPanel from './pages/AdminPanel';
 
 export default function App() {
   return (
@@ -21,6 +22,9 @@ export default function App() {
             <Route path="/anime/:id" element={<AnimeDetail />} />
             <Route path="/favorites" element={
               <PrivateRoute><Favorites /></PrivateRoute>
+            } />
+            <Route path="/admin" element={
+              <PrivateRoute><AdminPanel /></PrivateRoute>
             } />
           </Routes>
         </div>
