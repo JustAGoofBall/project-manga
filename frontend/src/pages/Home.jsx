@@ -12,14 +12,21 @@ export default function Home() {
 
   useEffect(() => {
     loadAnime();
-  }, []);
+  }, [user]);
 
   async function loadAnime() {
     setLoading(true);
-    const res = await fetch('/api/anime');
-    const data = await res.json();
-    setAnime(data.data || []);
-    setLoading(false);
+    setError('');
+    try {
+      const res = await fetch('/api/anime');
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+      const data = await res.json();
+      setAnime(data.data || []);
+    } catch (e) {
+      setError('Kon anime niet laden. Is de backend actief?');
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleSearch(e) {
@@ -74,6 +81,8 @@ export default function Home() {
 
       {loading ? (
         <p>Laden...</p>
+      ) : error && !user ? (
+        <p style={{ color: '#e53e3e' }}>{error}</p>
       ) : anime.length === 0 ? (
         <p>Geen anime gevonden.</p>
       ) : (
@@ -81,7 +90,7 @@ export default function Home() {
           {anime.map(a => (
             <Link key={a.id} to={`/anime/${a.id}`} style={styles.card}>
               <h3 style={styles.cardTitle}>{a.name}</h3>
-              <p style={styles.cardSub}>{a.character_count ?? 0} characters</p>
+              <p style={styles.cardSub}>{a.characters?.length ?? 0} characters</p>
             </Link>
           ))}
         </div>
