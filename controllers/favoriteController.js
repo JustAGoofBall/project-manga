@@ -1,6 +1,6 @@
 const Favorite = require('../models/favoriteModel');
 const Anime = require('../models/animeModel');
-const { validateAnimeId } = require('../validators/animeValidator');
+const { validateFavoriteAnimeId } = require('../validators/favoriteValidator');
 
 /**
  * Favorite Controller
@@ -26,7 +26,7 @@ exports.getUserFavorites = async (req, res) => {
  */
 exports.addFavorite = async (req, res) => {
   try {
-    const animeId = validateAnimeId(req.params.animeId);
+    const animeId = validateFavoriteAnimeId(req.params.animeId);
 
     const anime = await Anime.getById(animeId);
     if (!anime) {
@@ -59,7 +59,7 @@ exports.addFavorite = async (req, res) => {
  */
 exports.removeFavorite = async (req, res) => {
   try {
-    const animeId = validateAnimeId(req.params.animeId);
+    const animeId = validateFavoriteAnimeId(req.params.animeId);
 
     const existing = await Favorite.getByUserAndAnime(req.user.id, animeId);
     if (!existing) {

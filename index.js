@@ -1,9 +1,32 @@
 const express = require('express');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // Import middleware
 const logger = require('./middleware/logger');
 const { notFound, errorHandler } = require('./middleware/errorHandler');
+
+// ========== RATE LIMITERS ==========
+// General limiter: 100 requests per 15 minutes
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  skip: () => process.env.NODE_ENV === 'test',
+  message: { success: false, message: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+// Auth limiter: 10 requests per 15 minutes (brute force protection)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  skip: () => process.env.NODE_ENV === 'test',
+  message: { success: false, message: 'Too many login attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
 
 // Import routes
 const animeRoutes = require('./routes/anime');
@@ -18,8 +41,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ========== MIDDLEWARE ==========
+app.use(cors());               // CORS - allow cross-origin requests
 app.use(express.json());
-app.use(logger); // Request/Response logging
+app.use(logger);               // Request/Response logging
+app.use('/api', generalLimiter);       // Rate limiting on all API routes
+app.use('/api/auth', authLimiter);     // Stricter limit on auth routes
 
 // ========== ROUTES ==========
 
