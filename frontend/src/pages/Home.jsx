@@ -65,7 +65,7 @@ export default function Home() {
         {search && <button style={styles.clearBtn} type="button" onClick={() => { setSearch(''); loadAnime(); }}>✕</button>}
       </form>
 
-      {user && (
+      {user && user.is_admin && (
         <form onSubmit={handleAdd} style={styles.addForm}>
           <input
             style={styles.searchInput}

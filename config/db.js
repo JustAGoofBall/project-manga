@@ -46,10 +46,18 @@ function initDatabase() {
         username TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
+        is_admin INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Add is_admin column to existing users table (if it doesn't exist)
+    try {
+      db.exec(`ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0`);
+    } catch (e) {
+      // Column already exists, ignore
+    }
 
     // Create ratings table
     db.exec(`
