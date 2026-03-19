@@ -1,13 +1,23 @@
+/* Import CSS files */
+@import './styles/variables.css';
+@import './styles/utilities.css';
+@import './styles/Home.css';
+@import './styles/Auth.css';
+@import './styles/Favorites.css';
+@import './styles/AnimeDetail.css';
+@import './styles/AdminPanel.css';
+
+/* Global styles */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
 :root {
-  font-family: Inter, system-ui, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color: #2d3748;
-  background-color: #f7fafc;
+  font-family: var(--font-family);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg-light);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -18,13 +28,27 @@ body {
 }
 
 h1, h2, h3 {
-  line-height: 1.2;
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: var(--font-size-2xl);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+}
+
+h3 {
+  font-size: var(--font-size-lg);
 }
 
 a {
-  color: #3182ce;
+  color: var(--color-primary);
+  text-decoration: none;
 }
 
 a:hover {
-  color: #2c5282;
+  color: var(--color-primary-dark);
 }

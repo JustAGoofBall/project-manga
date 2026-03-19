@@ -13,7 +13,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div style={{ minHeight: '100vh', background: '#f7fafc' }}>
+        <div style={{ minHeight: '100vh' }}>
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />

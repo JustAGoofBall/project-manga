@@ -197,7 +197,7 @@
 
 | Category | Required | Achieved | Score |
 |----------|----------|----------|-------|
-| Backend Framework | ✅ | ✅ | 100% |
+| Backend Framework| ✅ | ✅ | 100% |
 | UI Framework | ✅ | ✅ | 100% |
 | MVC Architecture | ✅ | ✅ | 100% |
 | Authentication | ✅ | ✅ | 100% |
@@ -215,7 +215,7 @@
 
 ## 🎉 CONCLUSION
 
-**JE HEBT ALLE LEERUITKOMSTEN BEREIKT!**
+**Ik heb ALLE LEERUITKOMSTEN BEREIKT! als het goed is**
 
 Je project voldoet aan:
 - ✅ **Alle basis vereisten** (oriëntatie frameworks)
@@ -224,7 +224,7 @@ Je project voldoet aan:
 - ✅ **Alle security standards**
 - ✅ **Alle code quality standards**
 
-### Wat je hebt bereikt:
+### Wat heb ik bereikt:
 1. **Professionele backend API** met Express.js + MVC
 2. **Complete React frontend** met authentication
 3. **Secure authentication** met JWT + bcrypt
@@ -236,8 +236,8 @@ Je project voldoet aan:
 
 ## 📝 DOCUMENTATIE LOCATIES
 
-Alle documentatie is nu centraal opgeslagen in `/docs` folder:
-- `docs/INDEX.md` - Start hier!
+Alle documentatie is nu centraal opgeslagen in `/portfolio_docs` folder:
+- `/port/INDEX.md` - Start hier!
 - `docs/LEERUITKOMSTEN-ANALYSE.md` - Deze checklist
 - `docs/MVC-STRUCTUUR.md` - Architecture explanation
 - `docs/AUTH-GUIDE.md` - Authentication guide
