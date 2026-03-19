@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import '../styles/AdminPanel.css';
 
 export default function AdminPanel() {
   const { user, authFetch } = useAuth();
@@ -228,27 +229,27 @@ export default function AdminPanel() {
   if (!user?.is_admin) return null;
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>👑 Admin Panel</h1>
-        <p style={styles.subtitle}>Beheer users en content</p>
+    <div className="admin-container">
+      <div className="admin-header">
+        <h1 className="admin-title">👑 Admin Panel</h1>
+        <p className="admin-subtitle">Beheer users en content</p>
       </div>
 
-      {error && <div style={styles.errorBox}>{error}</div>}
-      {success && <div style={styles.successBox}>{success}</div>}
+      {error && <div className="admin-error">{error}</div>}
+      {success && <div className="admin-success">{success}</div>}
 
-      <div style={styles.section}>
-        <h2 style={styles.sectionTitle}>👥 Users Beheren</h2>
+      <div className="admin-section">
+        <h2 className="admin-section-title">👥 Users Beheren</h2>
 
-        <div style={styles.searchContainer}>
+        <div className="admin-search-container">
           <input
             type="text"
             placeholder="Zoek users op naam of email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={styles.searchInput}
+            className="admin-search-input"
           />
-          <span style={styles.resultCount}>
+          <span className="admin-result-count">
             {filteredUsers.length} van {users.length} users
           </span>
         </div>
@@ -258,43 +259,43 @@ export default function AdminPanel() {
         ) : users.length === 0 ? (
           <p>Geen users gevonden.</p>
         ) : (
-          <div style={styles.tableContainer}>
-            <table style={styles.table}>
+          <div className="admin-table-container">
+            <table className="admin-table">
               <thead>
-                <tr style={styles.tableHeader}>
-                  <th style={styles.th}>Gebruiker</th>
-                  <th style={styles.th}>Email</th>
-                  <th style={styles.th}>Status</th>
-                  <th style={styles.th}>Acties</th>
+                <tr className="admin-table-header">
+                  <th className="admin-table-th">Gebruiker</th>
+                  <th className="admin-table-th">Email</th>
+                  <th className="admin-table-th">Status</th>
+                  <th className="admin-table-th">Acties</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.map(u => (
-                  <tr key={u.id} style={styles.tableRow}>
-                    <td style={styles.td}>
+                  <tr key={u.id} className="admin-table-row">
+                    <td className="admin-table-td">
                       <strong>{u.username}</strong>
-                      {u.id === user.id && <span style={styles.badge}> (Jij)</span>}
+                      {u.id === user.id && <span className="admin-badge"> (Jij)</span>}
                     </td>
-                    <td style={styles.td}>{u.email}</td>
-                    <td style={styles.td}>
+                    <td className="admin-table-td">{u.email}</td>
+                    <td className="admin-table-td">
                       {u.is_admin ? (
-                        <span style={styles.adminBadge}>👑 Admin</span>
+                        <span className="admin-badge">👑 Admin</span>
                       ) : (
-                        <span style={styles.userBadge}>👤 User</span>
+                        <span className="admin-badge">👤 User</span>
                       )}
                     </td>
-                    <td style={styles.td}>
+                    <td className="admin-table-td">
                       {u.id !== user.id && (
-                        <div style={styles.buttonGroup}>
+                        <div className="admin-button-group">
                           <button
                             onClick={() => toggleAdmin(u.id, u.is_admin)}
-                            style={u.is_admin ? styles.removeAdminBtn : styles.makeAdminBtn}
+                            className={u.is_admin ? 'admin-remove-admin-btn' : 'admin-make-admin-btn'}
                           >
                             {u.is_admin ? 'Admin verwijderen' : 'Admin maken'}
                           </button>
                           <button
                             onClick={() => deleteUser(u.id, u.username)}
-                            style={styles.deleteBtn}
+                            className="admin-delete-btn"
                           >
                             Verwijderen
                           </button>
@@ -309,17 +310,17 @@ export default function AdminPanel() {
         )}
       </div>
 
-      <div style={styles.section}>
-        <h2 style={styles.sectionTitle}>🎭 Karakters Beheren</h2>
+      <div className="admin-section">
+        <h2 className="admin-section-title">🎭 Karakters Beheren</h2>
 
-        <div style={styles.addForm}>
-          <h3 style={styles.formTitle}>Nieuw Karakter Toevoegen</h3>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Anime:</label>
+        <div className="admin-add-form">
+          <h3 className="admin-form-title">Nieuw Karakter Toevoegen</h3>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Anime:</label>
             <select
               value={selectedAnimeId}
               onChange={(e) => setSelectedAnimeId(e.target.value)}
-              style={styles.select}
+              className="admin-form-select"
             >
               <option value="">-- Selecteer een anime --</option>
               {animes.map(a => (
@@ -327,26 +328,26 @@ export default function AdminPanel() {
               ))}
             </select>
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Karakternaam:</label>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Karakternaam:</label>
             <input
               type="text"
               value={characterName}
               onChange={(e) => setCharacterName(e.target.value)}
               placeholder="Voer karakternaam in"
-              style={styles.input}
+              className="admin-form-input"
             />
           </div>
-          <button onClick={addCharacter} style={styles.addBtn}>
+          <button onClick={addCharacter} className="admin-add-btn">
             ➕ Karakter Toevoegen
           </button>
         </div>
 
-        <div style={styles.searchContainer}>
+        <div className="admin-search-container">
           <select
             value={selectedAnimeId}
             onChange={(e) => setSelectedAnimeId(e.target.value)}
-            style={styles.select}
+            className="admin-form-select"
           >
             <option value="">Alle animes</option>
             {animes.map(a => (
@@ -358,9 +359,9 @@ export default function AdminPanel() {
             placeholder="Zoek karakters..."
             value={characterSearch}
             onChange={(e) => setCharacterSearch(e.target.value)}
-            style={styles.searchInput}
+            className="admin-search-input"
           />
-          <span style={styles.resultCount}>
+          <span className="admin-result-count">
             {filteredCharacters.length} karakters
           </span>
         </div>
@@ -368,43 +369,43 @@ export default function AdminPanel() {
         {filteredCharacters.length === 0 ? (
           <p>Geen karakters gevonden.</p>
         ) : (
-          <div style={styles.tableContainer}>
-            <table style={styles.table}>
+          <div className="admin-table-container">
+            <table className="admin-table">
               <thead>
-                <tr style={styles.tableHeader}>
-                  <th style={styles.th}>Anime</th>
-                  <th style={styles.th}>Karakter</th>
-                  <th style={styles.th}>Acties</th>
+                <tr className="admin-table-header">
+                  <th className="admin-table-th">Anime</th>
+                  <th className="admin-table-th">Karakter</th>
+                  <th className="admin-table-th">Acties</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredCharacters.map(c => (
-                  <tr key={c.id} style={styles.tableRow}>
-                    <td style={styles.td}>{c.anime_name}</td>
-                    <td style={styles.td}>
+                  <tr key={c.id} className="admin-table-row">
+                    <td className="admin-table-td">{c.anime_name}</td>
+                    <td className="admin-table-td">
                       {editingCharacterId === c.id ? (
                         <input
                           type="text"
                           value={editingCharacterName}
                           onChange={(e) => setEditingCharacterName(e.target.value)}
-                          style={styles.editInput}
+                          className="admin-edit-input"
                         />
                       ) : (
                         c.name
                       )}
                     </td>
-                    <td style={styles.td}>
+                    <td className="admin-table-td">
                       {editingCharacterId === c.id ? (
                         <>
                           <button
                             onClick={() => updateCharacter(c.id, c.anime_id)}
-                            style={styles.saveBtn}
+                            className="admin-save-btn"
                           >
                             ✓ Opslaan
                           </button>
                           <button
                             onClick={() => setEditingCharacterId(null)}
-                            style={styles.cancelBtn}
+                            className="admin-cancel-btn"
                           >
                             ✕ Annuleren
                           </button>
@@ -416,13 +417,13 @@ export default function AdminPanel() {
                               setEditingCharacterId(c.id);
                               setEditingCharacterName(c.name);
                             }}
-                            style={styles.editBtn}
+                            className="admin-edit-btn"
                           >
                             ✏️ Bewerken
                           </button>
                           <button
                             onClick={() => deleteCharacter(c.id, c.anime_id, c.name)}
-                            style={styles.deleteBtn}
+                            className="admin-delete-btn"
                           >
                             🗑️ Verwijderen
                           </button>
@@ -437,14 +438,14 @@ export default function AdminPanel() {
         )}
       </div>
 
-      <div style={styles.section}>
-        <h2 style={styles.sectionTitle}>🎬 Anime Beheren</h2>
-        <p style={styles.sectionText}>
+      <div className="admin-section">
+        <h2 className="admin-section-title">🎬 Anime Beheren</h2>
+        <p className="admin-section-text">
           Je kunt animes direct toevoegen, bewerken en verwijderen op de startpagina.
         </p>
         <button
           onClick={() => navigate('/')}
-          style={styles.goToHomeBtn}
+          className="admin-go-home-btn"
         >
           Naar Anime Overzicht
         </button>
@@ -452,52 +453,3 @@ export default function AdminPanel() {
     </div>
   );
 }
-
-const styles = {
-  container: { maxWidth: '1000px', margin: '0 auto', padding: '2rem 1rem' },
-  header: { marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '2px solid #e2e8f0' },
-  title: { margin: 0, fontSize: '2rem', color: '#1a202c' },
-  subtitle: { margin: '0.5rem 0 0', color: '#718096', fontSize: '1rem' },
-
-  errorBox: { background: '#fed7d7', color: '#c53030', padding: '1rem', borderRadius: '6px', marginBottom: '1rem' },
-  successBox: { background: '#c6f6d5', color: '#22543d', padding: '1rem', borderRadius: '6px', marginBottom: '1rem' },
-
-  section: { marginBottom: '3rem', background: 'white', padding: '1.5rem', borderRadius: '8px', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' },
-  sectionTitle: { margin: '0 0 1.5rem', fontSize: '1.3rem', color: '#2d3748' },
-  sectionText: { color: '#718096', marginBottom: '1rem' },
-
-  addForm: { background: '#f7fafc', padding: '1.5rem', borderRadius: '6px', marginBottom: '2rem', border: '1px solid #e2e8f0' },
-  formTitle: { margin: '0 0 1rem', fontSize: '1rem', color: '#2d3748' },
-  formGroup: { marginBottom: '1rem' },
-  label: { display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: '#2d3748', fontSize: '0.9rem' },
-  input: { width: '100%', padding: '0.6rem', border: '1px solid #cbd5e0', borderRadius: '6px', fontSize: '0.95rem', boxSizing: 'border-box' },
-  select: { width: '100%', padding: '0.6rem', border: '1px solid #cbd5e0', borderRadius: '6px', fontSize: '0.95rem', boxSizing: 'border-box', background: 'white' },
-  addBtn: { padding: '0.6rem 1.2rem', background: '#38a169', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: '500', fontSize: '0.95rem' },
-
-  searchContainer: { display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem' },
-  searchInput: { flex: 1, padding: '0.6rem', border: '1px solid #cbd5e0', borderRadius: '6px', fontSize: '0.95rem' },
-  resultCount: { color: '#718096', fontSize: '0.9rem', whiteSpace: 'nowrap' },
-
-  tableContainer: { overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse' },
-  tableHeader: { background: '#edf2f7' },
-  th: { padding: '0.75rem', textAlign: 'left', fontWeight: '600', borderBottom: '2px solid #cbd5e0' },
-  tableRow: { borderBottom: '1px solid #e2e8f0' },
-  td: { padding: '0.75rem', verticalAlign: 'middle' },
-
-  editInput: { width: '100%', padding: '0.4rem', border: '1px solid #3182ce', borderRadius: '4px', fontSize: '0.9rem', boxSizing: 'border-box' },
-  editBtn: { padding: '0.3rem 0.6rem', background: '#3182ce', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginRight: '0.3rem' },
-  saveBtn: { padding: '0.3rem 0.6rem', background: '#38a169', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginRight: '0.3rem' },
-  cancelBtn: { padding: '0.3rem 0.6rem', background: '#a0aec0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' },
-  deleteBtn: { padding: '0.3rem 0.6rem', background: '#e53e3e', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' },
-
-  badge: { background: '#edf2f7', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem' },
-  adminBadge: { background: '#d4a574', color: '#1a1a2e', padding: '0.3rem 0.6rem', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.85rem' },
-  userBadge: { background: '#bee3f8', color: '#2c5282', padding: '0.3rem 0.6rem', borderRadius: '4px', fontSize: '0.85rem' },
-
-  buttonGroup: { display: 'flex', gap: '0.5rem', flexWrap: 'wrap' },
-  makeAdminBtn: { padding: '0.4rem 0.8rem', background: '#3182ce', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' },
-  removeAdminBtn: { padding: '0.4rem 0.8rem', background: '#ed8936', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' },
-
-  goToHomeBtn: { padding: '0.6rem 1.2rem', background: '#38a169', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '500' }
-};

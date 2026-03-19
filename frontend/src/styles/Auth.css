@@ -1,0 +1,99 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-4xl) var(--spacing-lg);
+}
+
+.auth-card {
+  background: var(--color-bg-white);
+  padding: var(--spacing-3xl);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-title {
+  margin-bottom: var(--spacing-2xl);
+  text-align: center;
+  font-size: var(--font-size-2xl);
+}
+
+.auth-error {
+  color: var(--color-danger);
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-base);
+}
+
+.auth-label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-medium);
+  font-size: var(--font-size-base);
+}
+
+.auth-input {
+  display: block;
+  width: 100%;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.auth-button {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-base);
+  transition: background-color var(--transition-fast);
+}
+
+.auth-button:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+}
+
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: var(--spacing-lg);
+  font-size: var(--font-size-base);
+}
+
+.auth-footer a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+}
+
+.auth-footer a:hover {
+  color: var(--color-primary-dark);
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: var(--spacing-2xl);
+  }
+
+  .auth-container {
+    padding: var(--spacing-2xl) var(--spacing-sm);
+  }
+}

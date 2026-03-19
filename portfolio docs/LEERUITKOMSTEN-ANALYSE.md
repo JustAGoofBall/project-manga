@@ -1,10 +1,10 @@
 # 📊 Leeruitkomsten Analyse - Project Manga API
 
-## ✅ WAT JE AL HEBT BEREIKT
+##  WAT JE AL HEBT BEREIKT
 
 ### **Oriëntatie op Frameworks** 
 
-#### ✅ **Framework Documentatie & ORM**
+####  **Framework Documentatie & ORM**
 - **Status**: VOLLEDIG BEREIKT
 - **Bewijs**: 
   - Je gebruikt Express.js (backend framework)
@@ -12,7 +12,7 @@
   - Je hebt CRUD operaties geïmplementeerd (Create, Read, Update, Delete)
   - Je kunt resources beheren: anime en characters
 
-#### ✅ **Structural Design Pattern (MVC)**
+####  **Structural Design Pattern (MVC)**
 - **Status**: VOLLEDIG BEREIKT 
 - **Bewijs**:
   - Model: `animeModel.js`, `characterModel.js` - database logica
@@ -23,7 +23,7 @@
 
 ### **Frameworks Gevorderd**
 
-#### ✅ **Geautomatiseerde Testen** 
+####  **Geautomatiseerde Testen** 
 - **Status**: UITSTEKEND
 - **Bewijs**:
   - 60 tests - allemaal geslaagd ✓
@@ -33,7 +33,7 @@
   - Tests voor alle CRUD operaties
   - Tests voor error handling
 
-#### ✅ **Scheiding van Verantwoordelijkheden**
+####  **Scheiding van Verantwoordelijkheden**
 - **Status**: EXCELLENT
 - **Bewijs**:
   - Separate Models voor data access
@@ -42,7 +42,7 @@
   - Separate Validators voor input validatie
   - Separate Middleware voor logging en error handling
 
-#### ✅ **Validatie & Foutafhandeling** 
+####  **Validatie & Foutafhandeling** 
 - **Status**: GOED GEÏMPLEMENTEERD
 - **Bewijs**:
   - Validators: `animeValidator.js`, `characterValidator.js`
@@ -51,7 +51,7 @@
   - HTTP status codes (400, 404, 409, etc.)
   - Custom error messages
 
-#### ✅ **Business Logic & Relaties**
+####  **Business Logic & Relaties**
 - **Status**: GEÏMPLEMENTEERD
 - **Bewijs**:
   - Foreign key relatie: characters → anime (ON DELETE CASCADE)
@@ -267,7 +267,7 @@ Voor je leeruitkomst **"eigen leerproces evalueren"**, maak een reflectie docume
 
 ## 🎓 LEERUITKOMSTEN CHECKLIST
 
-### **Oriëntatie Frameworks** ✅ 85%
+### **Oriëntatie Frameworks**  85%
 - [x] Backend framework (Express.js)
 - [x] Documentatie lezen en toepassen
 - [x] Resource beheren met ORM
@@ -276,33 +276,33 @@ Voor je leeruitkomst **"eigen leerproces evalueren"**, maak een reflectie docume
 - [ ] Keuzes uitleggen in document
 - [ ] Reflectie schrijven
 
-### **Frameworks Gevorderd** ✅ 70%
+### **Frameworks Gevorderd**  70%
 - [x] Geautomatiseerde testen (60 tests!)
 - [x] Business logic & relaties
 - [x] Scheiding van verantwoordelijkheden
 - [x] Validatie & foutafhandeling
-- [ ] **Authenticatie & autorisatie** ⚠️ **(KRITISCH)**
+- [ ] **Authenticatie & autorisatie** **(KRITISCH)**
 - [ ] Code review geven/ontvangen
 
 ---
 
-## 💡 ADVIES
+## ADVIES
 
-### **Prioriteit 1: Authenticatie** 🔥
+### **Prioriteit 1: Authenticatie**
 Dit is het belangrijkste wat ontbreekt. Begin hier direct mee!
 
-### **Prioriteit 2: UI Framework** 🎨
+### **Prioriteit 2: UI Framework**
 Nodig voor volledige leeruitkomst oriëntatie frameworks.
 
-### **Prioriteit 3: Ratings & Favorieten** ⭐
+### **Prioriteit 3: Ratings & Favorieten**
 Maakt je project compleet volgens je README beschrijving.
 
-### **Prioriteit 4: Documentatie & Reflectie** 📚
+### **Prioriteit 4: Documentatie & Reflectie**
 Essentieel voor beoordeling - leg uit waarom je bepaalde keuzes hebt gemaakt.
 
 ---
 
-## 🚀 BEGIN HIER
+## BEGIN HIER
 
 **Vandaag:**
 1. Lees deze analyse grondig door
@@ -320,7 +320,7 @@ Essentieel voor beoordeling - leg uit waarom je bepaalde keuzes hebt gemaakt.
 
 ---
 
-## ❓ Heb je hulp nodig?
+## Heb je hulp nodig?
 
 Zeg tegen mij:
 - **"Help me met authenticatie"** - Ik maak de auth code voor je
@@ -328,4 +328,4 @@ Zeg tegen mij:
 - **"Help me met ratings"** - Ik maak de rating functionaliteit
 - **"Maak reflectie template"** - Ik maak een document voor je reflectie
 
-Je bent al ver gekomen! Je hebt een solide basis. Nu gewoon de ontbrekende stukken toevoegen! 💪
+Je bent al ver gekomen! Je hebt een solide basis. Nu gewoon de ontbrekende stukken toevoegen! 
