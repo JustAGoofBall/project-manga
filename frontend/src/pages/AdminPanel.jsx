@@ -1,19 +1,35 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import AdminUsersSection from '../components/AdminUsersSection';
+import AdminCharactersSection from '../components/AdminCharactersSection';
+import AdminAnimesSection from '../components/AdminAnimesSection';
 import '../styles/AdminPanel.css';
 
 export default function AdminPanel() {
   const { user, authFetch } = useAuth();
   const navigate = useNavigate();
 
+  const ITEMS_PER_PAGE = 10;
+
   // Users state
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [search, setSearch] = useState('');
+  const [userSearch, setUserSearch] = useState('');
+  const [userSortBy, setUserSortBy] = useState('username');
+  const [userCurrentPage, setUserCurrentPage] = useState(0);
+
+  // Anime state
+  const [animes, setAnimes] = useState([]);
+  const [filteredAnimes, setFilteredAnimes] = useState([]);
+  const [animeSearch, setAnimeSearch] = useState('');
+  const [animeSortBy, setAnimeSortBy] = useState('name'); // 'name' or 'characters'
+  const [animeFormName, setAnimeFormName] = useState('');
+  const [editingAnimeId, setEditingAnimeId] = useState(null);
+  const [editingAnimeName, setEditingAnimeName] = useState('');
+  const [animeCurrentPage, setAnimeCurrentPage] = useState(0);
 
   // Characters state
-  const [animes, setAnimes] = useState([]);
   const [characters, setCharacters] = useState([]);
   const [filteredCharacters, setFilteredCharacters] = useState([]);
   const [characterSearch, setCharacterSearch] = useState('');
@@ -21,6 +37,7 @@ export default function AdminPanel() {
   const [characterName, setCharacterName] = useState('');
   const [editingCharacterId, setEditingCharacterId] = useState(null);
   const [editingCharacterName, setEditingCharacterName] = useState('');
+  const [characterCurrentPage, setCharacterCurrentPage] = useState(0);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -38,19 +55,37 @@ export default function AdminPanel() {
   }, [user, navigate]);
 
   useEffect(() => {
-    // Filter users based on search
-    if (!search.trim()) {
-      setFilteredUsers(users);
-    } else {
-      const lowerSearch = search.toLowerCase();
-      setFilteredUsers(
-        users.filter(u =>
-          u.username.toLowerCase().includes(lowerSearch) ||
-          u.email.toLowerCase().includes(lowerSearch)
-        )
+    // Filter and sort users
+    let filtered = [...users]; // Make a copy to avoid mutation
+    
+    // Filter by search
+    if (userSearch.trim()) {
+      const lowerSearch = userSearch.toLowerCase();
+      filtered = filtered.filter(u =>
+        u.username.toLowerCase().includes(lowerSearch) ||
+        u.email.toLowerCase().includes(lowerSearch)
       );
     }
-  }, [search, users]);
+    
+    // Sort based on selection
+    if (userSortBy === 'email') {
+      filtered.sort((a, b) => a.email.localeCompare(b.email, 'nl', { sensitivity: 'base' }));
+    } else if (userSortBy === 'admin') {
+      // Sort admins first, then regular users
+      filtered.sort((a, b) => {
+        if (a.is_admin === b.is_admin) {
+          return a.username.localeCompare(b.username, 'nl', { sensitivity: 'base' });
+        }
+        return b.is_admin - a.is_admin; // Admins first
+      });
+    } else {
+      // Sort alphabetically by username
+      filtered.sort((a, b) => a.username.localeCompare(b.username, 'nl', { sensitivity: 'base' }));
+    }
+    
+    setFilteredUsers(filtered);
+    setUserCurrentPage(0); // Reset to first page when filter/sort changes
+  }, [userSearch, users, userSortBy]);
 
   useEffect(() => {
     // Filter characters based on search
@@ -63,7 +98,35 @@ export default function AdminPanel() {
       filtered = filtered.filter(c => c.name.toLowerCase().includes(lowerSearch));
     }
     setFilteredCharacters(filtered);
+    setCharacterCurrentPage(0); // Reset to first page when filter changes
   }, [characterSearch, characters, selectedAnimeId]);
+
+  useEffect(() => {
+    // Filter and sort animes
+    let filtered = [...animes]; // Make a copy to avoid mutation
+    
+    // Filter by search
+    if (animeSearch.trim()) {
+      const lowerSearch = animeSearch.toLowerCase();
+      filtered = filtered.filter(a => a.name.toLowerCase().includes(lowerSearch));
+    }
+    
+    // Sort based on selection
+    if (animeSortBy === 'characters') {
+      // Sort by character count descending (most characters first)
+      filtered.sort((a, b) => {
+        const aCount = a.characters?.length ?? 0;
+        const bCount = b.characters?.length ?? 0;
+        return bCount - aCount; // Descending
+      });
+    } else {
+      // Sort alphabetically by name
+      filtered.sort((a, b) => a.name.localeCompare(b.name, 'nl', { sensitivity: 'base' }));
+    }
+    
+    setFilteredAnimes(filtered);
+    setAnimeCurrentPage(0); // Reset to first page when filter changes
+  }, [animeSearch, animes, animeSortBy]);
 
   async function loadUsers() {
     try {
@@ -73,7 +136,7 @@ export default function AdminPanel() {
       setUsers(data.data || []);
       setError('');
     } catch (e) {
-      setError('Kon users niet laden: ' + e.message);
+      handleError('Kon users niet laden: ' + e.message);
     } finally {
       setLoading(false);
     }
@@ -89,6 +152,22 @@ export default function AdminPanel() {
       console.error('Error loading animes:', e.message);
     }
   }
+
+  // ===== COMMON HANDLER FUNCTIONS =====
+  const handleError = (message) => {
+    setError(message);
+    setSuccess('');
+  };
+
+  const handleSuccess = (message) => {
+    setSuccess(message);
+    setError('');
+  };
+
+  const resetFormState = () => {
+    setError('');
+    setSuccess('');
+  };
 
   async function loadCharacters() {
     try {
@@ -119,12 +198,11 @@ export default function AdminPanel() {
 
   async function addCharacter() {
     if (!selectedAnimeId || !characterName.trim()) {
-      setError('Selecteer een anime en voer een karakternaam in');
+      handleError('Selecteer een anime en voer een karakternaam in');
       return;
     }
 
-    setError('');
-    setSuccess('');
+    resetFormState();
     try {
       const res = await authFetch(`/api/anime/${selectedAnimeId}/characters`, {
         method: 'POST',
@@ -133,22 +211,22 @@ export default function AdminPanel() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      setSuccess('Karakter toegevoegd');
+      handleSuccess('Karakter toegevoegd');
       setCharacterName('');
+      setCharacterCurrentPage(0);
       loadCharacters();
     } catch (e) {
-      setError(e.message);
+      handleError(e.message);
     }
   }
 
   async function updateCharacter(characterId, animeId) {
     if (!editingCharacterName.trim()) {
-      setError('Voer een karakternaam in');
+      handleError('Voer een karakternaam in');
       return;
     }
 
-    setError('');
-    setSuccess('');
+    resetFormState();
     try {
       const res = await authFetch(`/api/anime/${animeId}/characters/${characterId}`, {
         method: 'PUT',
@@ -157,12 +235,12 @@ export default function AdminPanel() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      setSuccess('Karakter bijgewerkt');
+      handleSuccess('Karakter bijgewerkt');
       setEditingCharacterId(null);
       setEditingCharacterName('');
       loadCharacters();
     } catch (e) {
-      setError(e.message);
+      handleError(e.message);
     }
   }
 
@@ -171,8 +249,7 @@ export default function AdminPanel() {
       return;
     }
 
-    setError('');
-    setSuccess('');
+    resetFormState();
     try {
       const res = await authFetch(`/api/anime/${animeId}/characters/${characterId}`, {
         method: 'DELETE'
@@ -180,16 +257,15 @@ export default function AdminPanel() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      setSuccess(`${characterName} is verwijderd`);
+      handleSuccess(`${characterName} is verwijderd`);
       loadCharacters();
     } catch (e) {
-      setError(e.message);
+      handleError(e.message);
     }
   }
 
   async function toggleAdmin(userId, currentStatus) {
-    setError('');
-    setSuccess('');
+    resetFormState();
     try {
       const res = await authFetch(`/api/admin/users/${userId}/admin`, {
         method: 'PUT',
@@ -198,10 +274,11 @@ export default function AdminPanel() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      setSuccess(currentStatus ? 'Admin status verwijderd' : 'Admin status gegeven');
+      handleSuccess(currentStatus ? 'Admin status verwijderd' : 'Admin status gegeven');
+      setUserCurrentPage(0);
       loadUsers();
     } catch (e) {
-      setError(e.message);
+      handleError(e.message);
     }
   }
 
@@ -210,8 +287,7 @@ export default function AdminPanel() {
       return;
     }
 
-    setError('');
-    setSuccess('');
+    resetFormState();
     try {
       const res = await authFetch(`/api/admin/users/${userId}`, {
         method: 'DELETE'
@@ -219,10 +295,83 @@ export default function AdminPanel() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      setSuccess(`${username} is verwijderd`);
+      handleSuccess(`${username} is verwijderd`);
+      setUserCurrentPage(0);
       loadUsers();
     } catch (e) {
-      setError(e.message);
+      handleError(e.message);
+    }
+  }
+
+  // ===== ANIME MANAGEMENT FUNCTIONS =====
+  async function addAnime() {
+    if (!animeFormName.trim()) {
+      handleError('Voer een anime naam in');
+      return;
+    }
+
+    resetFormState();
+    try {
+      const res = await authFetch('/api/anime', {
+        method: 'POST',
+        body: JSON.stringify({ name: animeFormName })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      handleSuccess('Anime toegevoegd');
+      setAnimeFormName('');
+      setAnimeCurrentPage(0);
+      loadAnimes();
+    } catch (e) {
+      handleError(e.message);
+    }
+  }
+
+  async function updateAnime(animeId) {
+    if (!editingAnimeName.trim()) {
+      handleError('Voer een anime naam in');
+      return;
+    }
+
+    resetFormState();
+    try {
+      const res = await authFetch(`/api/anime/${animeId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ name: editingAnimeName })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      handleSuccess('Anime bijgewerkt');
+      setEditingAnimeId(null);
+      setEditingAnimeName('');
+      setAnimeCurrentPage(0);
+      loadAnimes();
+    } catch (e) {
+      handleError(e.message);
+    }
+  }
+
+  async function deleteAnime(animeId, animeName) {
+    if (!window.confirm(`Weet je zeker dat je "${animeName}" en alle bijbehorende karakters wilt verwijderen?`)) {
+      return;
+    }
+
+    resetFormState();
+    try {
+      const res = await authFetch(`/api/anime/${animeId}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      handleSuccess(`${animeName} is verwijderd`);
+      setAnimeCurrentPage(0);
+      loadAnimes();
+      loadCharacters();
+    } catch (e) {
+      handleError(e.message);
     }
   }
 
@@ -238,218 +387,64 @@ export default function AdminPanel() {
       {error && <div className="admin-error">{error}</div>}
       {success && <div className="admin-success">{success}</div>}
 
-      <div className="admin-section">
-        <h2 className="admin-section-title">👥 Users Beheren</h2>
+      <AdminUsersSection
+        filteredUsers={filteredUsers}
+        users={users}
+        user={user}
+        currentPage={userCurrentPage}
+        setCurrentPage={setUserCurrentPage}
+        itemsPerPage={ITEMS_PER_PAGE}
+        search={search}
+        setSearch={setSearch}
+        sortBy={userSortBy}
+        setSortBy={setUserSortBy}
+        loading={loading}
+        onToggleAdmin={toggleAdmin}
+        onDeleteUser={deleteUser}
+      />
 
-        <div className="admin-search-container">
-          <input
-            type="text"
-            placeholder="Zoek users op naam of email..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="admin-search-input"
-          />
-          <span className="admin-result-count">
-            {filteredUsers.length} van {users.length} users
-          </span>
-        </div>
+      <AdminCharactersSection
+        filteredCharacters={filteredCharacters}
+        characters={characters}
+        animes={animes}
+        currentPage={characterCurrentPage}
+        setCurrentPage={setCharacterCurrentPage}
+        itemsPerPage={ITEMS_PER_PAGE}
+        search={characterSearch}
+        setSearch={setCharacterSearch}
+        selectedAnimeId={selectedAnimeId}
+        setSelectedAnimeId={setSelectedAnimeId}
+        characterName={characterName}
+        setCharacterName={setCharacterName}
+        editingCharacterId={editingCharacterId}
+        setEditingCharacterId={setEditingCharacterId}
+        editingCharacterName={editingCharacterName}
+        setEditingCharacterName={setEditingCharacterName}
+        onAddCharacter={addCharacter}
+        onUpdateCharacter={updateCharacter}
+        onDeleteCharacter={deleteCharacter}
+      />
 
-        {loading ? (
-          <p>Laden...</p>
-        ) : users.length === 0 ? (
-          <p>Geen users gevonden.</p>
-        ) : (
-          <div className="admin-table-container">
-            <table className="admin-table">
-              <thead>
-                <tr className="admin-table-header">
-                  <th className="admin-table-th">Gebruiker</th>
-                  <th className="admin-table-th">Email</th>
-                  <th className="admin-table-th">Status</th>
-                  <th className="admin-table-th">Acties</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUsers.map(u => (
-                  <tr key={u.id} className="admin-table-row">
-                    <td className="admin-table-td">
-                      <strong>{u.username}</strong>
-                      {u.id === user.id && <span className="admin-badge"> (Jij)</span>}
-                    </td>
-                    <td className="admin-table-td">{u.email}</td>
-                    <td className="admin-table-td">
-                      {u.is_admin ? (
-                        <span className="admin-badge">👑 Admin</span>
-                      ) : (
-                        <span className="admin-badge">👤 User</span>
-                      )}
-                    </td>
-                    <td className="admin-table-td">
-                      {u.id !== user.id && (
-                        <div className="admin-button-group">
-                          <button
-                            onClick={() => toggleAdmin(u.id, u.is_admin)}
-                            className={u.is_admin ? 'admin-remove-admin-btn' : 'admin-make-admin-btn'}
-                          >
-                            {u.is_admin ? 'Admin verwijderen' : 'Admin maken'}
-                          </button>
-                          <button
-                            onClick={() => deleteUser(u.id, u.username)}
-                            className="admin-delete-btn"
-                          >
-                            Verwijderen
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      <div className="admin-section">
-        <h2 className="admin-section-title">🎭 Karakters Beheren</h2>
-
-        <div className="admin-add-form">
-          <h3 className="admin-form-title">Nieuw Karakter Toevoegen</h3>
-          <div className="admin-form-group">
-            <label className="admin-form-label">Anime:</label>
-            <select
-              value={selectedAnimeId}
-              onChange={(e) => setSelectedAnimeId(e.target.value)}
-              className="admin-form-select"
-            >
-              <option value="">-- Selecteer een anime --</option>
-              {animes.map(a => (
-                <option key={a.id} value={a.id}>{a.name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="admin-form-group">
-            <label className="admin-form-label">Karakternaam:</label>
-            <input
-              type="text"
-              value={characterName}
-              onChange={(e) => setCharacterName(e.target.value)}
-              placeholder="Voer karakternaam in"
-              className="admin-form-input"
-            />
-          </div>
-          <button onClick={addCharacter} className="admin-add-btn">
-            ➕ Karakter Toevoegen
-          </button>
-        </div>
-
-        <div className="admin-search-container">
-          <select
-            value={selectedAnimeId}
-            onChange={(e) => setSelectedAnimeId(e.target.value)}
-            className="admin-form-select"
-          >
-            <option value="">Alle animes</option>
-            {animes.map(a => (
-              <option key={a.id} value={a.id}>{a.name}</option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="Zoek karakters..."
-            value={characterSearch}
-            onChange={(e) => setCharacterSearch(e.target.value)}
-            className="admin-search-input"
-          />
-          <span className="admin-result-count">
-            {filteredCharacters.length} karakters
-          </span>
-        </div>
-
-        {filteredCharacters.length === 0 ? (
-          <p>Geen karakters gevonden.</p>
-        ) : (
-          <div className="admin-table-container">
-            <table className="admin-table">
-              <thead>
-                <tr className="admin-table-header">
-                  <th className="admin-table-th">Anime</th>
-                  <th className="admin-table-th">Karakter</th>
-                  <th className="admin-table-th">Acties</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCharacters.map(c => (
-                  <tr key={c.id} className="admin-table-row">
-                    <td className="admin-table-td">{c.anime_name}</td>
-                    <td className="admin-table-td">
-                      {editingCharacterId === c.id ? (
-                        <input
-                          type="text"
-                          value={editingCharacterName}
-                          onChange={(e) => setEditingCharacterName(e.target.value)}
-                          className="admin-edit-input"
-                        />
-                      ) : (
-                        c.name
-                      )}
-                    </td>
-                    <td className="admin-table-td">
-                      {editingCharacterId === c.id ? (
-                        <>
-                          <button
-                            onClick={() => updateCharacter(c.id, c.anime_id)}
-                            className="admin-save-btn"
-                          >
-                            ✓ Opslaan
-                          </button>
-                          <button
-                            onClick={() => setEditingCharacterId(null)}
-                            className="admin-cancel-btn"
-                          >
-                            ✕ Annuleren
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => {
-                              setEditingCharacterId(c.id);
-                              setEditingCharacterName(c.name);
-                            }}
-                            className="admin-edit-btn"
-                          >
-                            ✏️ Bewerken
-                          </button>
-                          <button
-                            onClick={() => deleteCharacter(c.id, c.anime_id, c.name)}
-                            className="admin-delete-btn"
-                          >
-                            🗑️ Verwijderen
-                          </button>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      <div className="admin-section">
-        <h2 className="admin-section-title">🎬 Anime Beheren</h2>
-        <p className="admin-section-text">
-          Je kunt animes direct toevoegen, bewerken en verwijderen op de startpagina.
-        </p>
-        <button
-          onClick={() => navigate('/')}
-          className="admin-go-home-btn"
-        >
-          Naar Anime Overzicht
-        </button>
-      </div>
+      <AdminAnimesSection
+        filteredAnimes={filteredAnimes}
+        animes={animes}
+        currentPage={animeCurrentPage}
+        setCurrentPage={setAnimeCurrentPage}
+        itemsPerPage={ITEMS_PER_PAGE}
+        search={animeSearch}
+        setSearch={setAnimeSearch}
+        sortBy={animeSortBy}
+        setSortBy={setAnimeSortBy}
+        formName={animeFormName}
+        setFormName={setAnimeFormName}
+        editingAnimeId={editingAnimeId}
+        setEditingAnimeId={setEditingAnimeId}
+        editingAnimeName={editingAnimeName}
+        setEditingAnimeName={setEditingAnimeName}
+        onAddAnime={addAnime}
+        onUpdateAnime={updateAnime}
+        onDeleteAnime={deleteAnime}
+      />
     </div>
   );
 }

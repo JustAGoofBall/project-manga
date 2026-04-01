@@ -12,16 +12,16 @@ class Character {
    */
   static async getAllByAnime(animeId) {
     const [anime] = await db.query('SELECT name FROM anime WHERE id = ?', [animeId]);
-    
+
     if (anime.length === 0) {
       return null;
     }
-    
+
     const [characters] = await db.query(
       'SELECT id, name, anime_id FROM characters WHERE anime_id = ?',
       [animeId]
     );
-    
+
     return {
       anime: anime[0].name,
       characters
@@ -36,20 +36,20 @@ class Character {
    */
   static async getById(animeId, characterId) {
     const [anime] = await db.query('SELECT name FROM anime WHERE id = ?', [animeId]);
-    
+
     if (anime.length === 0) {
       return null;
     }
-    
+
     const [character] = await db.query(
       'SELECT id, name, anime_id FROM characters WHERE id = ? AND anime_id = ?',
       [characterId, animeId]
     );
-    
+
     if (character.length === 0) {
       return null;
     }
-    
+
     return {
       anime: anime[0].name,
       character: character[0]
@@ -65,16 +65,16 @@ class Character {
   static async create(animeId, name) {
     // Check if anime exists
     const [anime] = await db.query('SELECT id FROM anime WHERE id = ?', [animeId]);
-    
+
     if (anime.length === 0) {
       return null;
     }
-    
+
     const [result] = await db.query(
       'INSERT INTO characters (name, anime_id) VALUES (?, ?)',
       [name, animeId]
     );
-    
+
     return {
       id: result.insertId,
       name,
@@ -94,11 +94,11 @@ class Character {
       'UPDATE characters SET name = ? WHERE id = ? AND anime_id = ?',
       [name, characterId, animeId]
     );
-    
+
     if (result.affectedRows === 0) {
       return null;
     }
-    
+
     return {
       id: parseInt(characterId),
       name,
@@ -117,7 +117,7 @@ class Character {
       'DELETE FROM characters WHERE id = ? AND anime_id = ?',
       [characterId, animeId]
     );
-    
+
     return result.affectedRows > 0;
   }
 }

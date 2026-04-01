@@ -314,3 +314,63 @@
 [2026-03-19T10:58:27.501Z] [INFO] RESPONSE - GET /api/anime/21/characters - 200 - 1ms
 [2026-03-19T10:58:27.514Z] [INFO] REQUEST - GET /api/anime/22/characters - IP: ::1
 [2026-03-19T10:58:27.515Z] [INFO] RESPONSE - GET /api/anime/22/characters - 200 - 1ms
+[2026-03-19T11:06:12.879Z] [INFO] REQUEST - GET /api/anime - IP: ::1
+[2026-03-19T11:06:12.882Z] [INFO] RESPONSE - GET /api/anime - 200 - 2ms
+[2026-03-19T11:06:12.886Z] [INFO] REQUEST - GET /api/anime - IP: ::1
+[2026-03-19T11:06:12.887Z] [INFO] RESPONSE - GET /api/anime - 200 - 2ms
+[2026-03-19T11:06:15.912Z] [INFO] REQUEST - GET /api/anime - IP: ::1
+[2026-03-19T11:06:15.917Z] [INFO] RESPONSE - GET /api/admin/users - 200 - 2ms
+[2026-03-19T11:06:15.914Z] [INFO] RESPONSE - GET /api/anime - 200 - 2ms
+[2026-03-19T11:06:15.915Z] [INFO] REQUEST - GET /api/admin/users - IP: ::1
+[2026-03-19T11:06:15.919Z] [INFO] REQUEST - GET /api/anime - IP: ::1
+[2026-03-19T11:06:15.922Z] [INFO] RESPONSE - GET /api/anime - 200 - 2ms
+[2026-03-19T11:06:15.923Z] [INFO] REQUEST - GET /api/admin/users - IP: ::1
+[2026-03-19T11:06:15.926Z] [INFO] RESPONSE - GET /api/admin/users - 200 - 3ms
+[2026-03-19T11:06:15.929Z] [INFO] REQUEST - GET /api/anime - IP: ::1
+[2026-03-19T11:06:15.933Z] [INFO] RESPONSE - GET /api/anime - 200 - 5ms
+[2026-03-19T11:06:15.935Z] [INFO] REQUEST - GET /api/anime/12/characters - IP: ::1
+[2026-03-19T11:06:15.936Z] [INFO] RESPONSE - GET /api/anime/12/characters - 200 - 1ms
+[2026-03-19T11:06:15.939Z] [INFO] REQUEST - GET /api/anime - IP: ::1
+[2026-03-19T11:06:15.943Z] [INFO] RESPONSE - GET /api/anime - 200 - 4ms
+[2026-03-19T11:06:15.945Z] [INFO] REQUEST - GET /api/anime/13/characters - IP: ::1
+[2026-03-19T11:06:15.946Z] [INFO] RESPONSE - GET /api/anime/13/characters - 200 - 1ms
+[2026-03-19T11:06:15.949Z] [INFO] REQUEST - GET /api/anime/12/characters - IP: ::1
+[2026-03-19T11:06:15.950Z] [INFO] RESPONSE - GET /api/anime/12/characters - 200 - 1ms
+[2026-03-19T11:06:15.954Z] [INFO] REQUEST - GET /api/anime/14/characters - IP: ::1
+[2026-03-19T11:06:15.955Z] [INFO] RESPONSE - GET /api/anime/14/characters - 200 - 1ms
+[2026-03-19T11:06:15.961Z] [INFO] RESPONSE - GET /api/anime/13/characters - 200 - 1ms
+[2026-03-19T11:06:15.960Z] [INFO] REQUEST - GET /api/anime/13/characters - IP: ::1
+[2026-03-19T11:06:15.961Z] [INFO] REQUEST - GET /api/anime/15/characters - IP: ::1
+[2026-03-19T11:06:15.962Z] [INFO] RESPONSE - GET /api/anime/15/characters - 200 - 1ms
+[2026-03-19T11:06:15.966Z] [INFO] REQUEST - GET /api/anime/14/characters - IP: ::1
+[2026-03-19T11:06:15.966Z] [INFO] RESPONSE - GET /api/anime/14/characters - 200 - 0ms
+[2026-03-19T11:06:15.967Z] [INFO] REQUEST - GET /api/anime/16/characters - IP: ::1
+[2026-03-19T11:06:15.968Z] [INFO] RESPONSE - GET /api/anime/16/characters - 200 - 1ms
+[2026-03-19T11:06:15.971Z] [INFO] REQUEST - GET /api/anime/15/characters - IP: ::1
+[2026-03-19T11:06:15.971Z] [INFO] RESPONSE - GET /api/anime/15/characters - 200 - 0ms
+[2026-03-19T11:06:15.972Z] [INFO] REQUEST - GET /api/anime/17/characters - IP: ::1
+[2026-03-19T11:06:15.973Z] [INFO] RESPONSE - GET /api/anime/17/characters - 200 - 1ms
+[2026-03-19T11:06:15.976Z] [INFO] REQUEST - GET /api/anime/16/characters - IP: ::1
+[2026-03-19T11:06:15.977Z] [INFO] RESPONSE - GET /api/anime/16/characters - 200 - 1ms
+[2026-03-19T11:06:15.979Z] [INFO] RESPONSE - GET /api/anime/18/characters - 200 - 1ms
+[2026-03-19T11:06:15.978Z] [INFO] REQUEST - GET /api/anime/18/characters - IP: ::1
+[2026-03-19T11:06:15.982Z] [INFO] REQUEST - GET /api/anime/17/characters - IP: ::1
+[2026-03-19T11:06:15.983Z] [INFO] RESPONSE - GET /api/anime/17/characters - 200 - 1ms
+[2026-03-19T11:06:15.985Z] [INFO] REQUEST - GET /api/anime/19/characters - IP: ::1
+[2026-03-19T11:06:15.986Z] [INFO] RESPONSE - GET /api/anime/19/characters - 200 - 1ms
+[2026-03-19T11:06:15.988Z] [INFO] REQUEST - GET /api/anime/18/characters - IP: ::1
+[2026-03-19T11:06:15.989Z] [INFO] RESPONSE - GET /api/anime/18/characters - 200 - 1ms
+[2026-03-19T11:06:15.991Z] [INFO] REQUEST - GET /api/anime/20/characters - IP: ::1
+[2026-03-19T11:06:15.992Z] [INFO] RESPONSE - GET /api/anime/20/characters - 200 - 1ms
+[2026-03-19T11:06:15.993Z] [INFO] REQUEST - GET /api/anime/19/characters - IP: ::1
+[2026-03-19T11:06:15.994Z] [INFO] RESPONSE - GET /api/anime/19/characters - 200 - 1ms
+[2026-03-19T11:06:15.996Z] [INFO] REQUEST - GET /api/anime/21/characters - IP: ::1
+[2026-03-19T11:06:15.997Z] [INFO] RESPONSE - GET /api/anime/21/characters - 200 - 1ms
+[2026-03-19T11:06:16.001Z] [INFO] RESPONSE - GET /api/anime/20/characters - 200 - 1ms
+[2026-03-19T11:06:16.000Z] [INFO] REQUEST - GET /api/anime/20/characters - IP: ::1
+[2026-03-19T11:06:16.004Z] [INFO] REQUEST - GET /api/anime/22/characters - IP: ::1
+[2026-03-19T11:06:16.005Z] [INFO] RESPONSE - GET /api/anime/22/characters - 200 - 1ms
+[2026-03-19T11:06:16.008Z] [INFO] REQUEST - GET /api/anime/21/characters - IP: ::1
+[2026-03-19T11:06:16.009Z] [INFO] RESPONSE - GET /api/anime/21/characters - 200 - 1ms
+[2026-03-19T11:06:16.021Z] [INFO] REQUEST - GET /api/anime/22/characters - IP: ::1
+[2026-03-19T11:06:16.022Z] [INFO] RESPONSE - GET /api/anime/22/characters - 200 - 1ms

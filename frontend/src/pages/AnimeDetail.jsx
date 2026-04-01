@@ -51,12 +51,21 @@ export default function AnimeDetail() {
   }
 
   async function toggleFavorite() {
-    if (isFavorite) {
-      await authFetch(`/api/favorites/${id}`, { method: 'DELETE' });
-    } else {
-      await authFetch(`/api/favorites/${id}`, { method: 'POST' });
+    try {
+      const method = isFavorite ? 'DELETE' : 'POST';
+      const res = await authFetch(`/api/favorites/${id}`, { method });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.message || 'Failed to update favorites');
+        return;
+      }
+      
+      setIsFavorite(!isFavorite);
+      setError('');
+    } catch (err) {
+      setError('Error updating favorites: ' + err.message);
     }
-    setIsFavorite(!isFavorite);
   }
 
   async function handleRatingSubmit(e) {
@@ -98,9 +107,12 @@ export default function AnimeDetail() {
           {avg && <p className="anime-detail-avg">⭐ Gemiddeld: {avg} / 10 ({ratings.length} reviews)</p>}
         </div>
         {user && (
-          <button onClick={toggleFavorite} className={`anime-detail-fav-btn ${isFavorite ? 'anime-detail-fav-btn-active' : 'anime-detail-fav-btn-inactive'}`}>
-            {isFavorite ? '❤️ Verwijder favoriet' : '🤍 Toevoegen aan favorieten'}
-          </button>
+          <div>
+            <button onClick={toggleFavorite} className={`anime-detail-fav-btn ${isFavorite ? 'anime-detail-fav-btn-active' : 'anime-detail-fav-btn-inactive'}`}>
+              {isFavorite ? '❤️ Verwijder favoriet' : '🤍 Toevoegen aan favorieten'}
+            </button>
+            {error && <p className="anime-detail-error">{error}</p>}
+          </div>
         )}
       </div>
 
