@@ -188,7 +188,7 @@ AdminCharactersSection.propTypes = {
   setSelectedAnimeId: PropTypes.func.isRequired,
   characterName: PropTypes.string.isRequired,
   setCharacterName: PropTypes.func.isRequired,
-  editingCharacterId: PropTypes.oneOfType([PropTypes.number, null]),
+  editingCharacterId: PropTypes.number,
   setEditingCharacterId: PropTypes.func.isRequired,
   editingCharacterName: PropTypes.string.isRequired,
   setEditingCharacterName: PropTypes.func.isRequired,

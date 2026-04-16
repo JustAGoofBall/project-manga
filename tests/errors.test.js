@@ -1,9 +1,14 @@
 const request = require('supertest');
 const app = require('../index');
 const db = require('../config/db');
+const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
 
 // Set test environment
 process.env.NODE_ENV = 'test';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
+const JWT_EXPIRES_IN = '7d';
 
 // Helper function to create a user and get auth token
 async function getAuthToken() {
@@ -16,6 +21,31 @@ async function getAuthToken() {
     });
   
   return response.body.data.token;
+}
+
+// Helper function to create an admin user and get admin auth token
+async function getAdminToken() {
+  const response = await request(app)
+    .post('/api/auth/register')
+    .send({
+      username: `admin_${Date.now()}`,
+      email: `admin_${Date.now()}@example.com`,
+      password: 'password123'
+    });
+  
+  const userId = response.body.data.user.id;
+  
+  // Make the user an admin in the database
+  await User.update(userId, { is_admin: 1 });
+  
+  // Create a new token with is_admin: 1
+  const adminToken = jwt.sign(
+    { id: userId, username: response.body.data.user.username, email: response.body.data.user.email, is_admin: 1 },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+  
+  return adminToken;
 }
 
 describe('Error Handling and Edge Cases', () => {
@@ -34,8 +64,8 @@ describe('Error Handling and Edge Cases', () => {
     await db.query('DELETE FROM characters');
     await db.query('DELETE FROM anime');
     
-    // Get a fresh auth token for protected routes
-    authToken = await getAuthToken();
+    // Get a fresh admin auth token for protected routes
+    authToken = await getAdminToken();
   });
 
   // Close database connection after all tests
