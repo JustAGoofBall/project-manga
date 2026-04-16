@@ -173,7 +173,7 @@ AdminAnimesSection.propTypes = {
   setSortBy: PropTypes.func.isRequired,
   formName: PropTypes.string.isRequired,
   setFormName: PropTypes.func.isRequired,
-  editingAnimeId: PropTypes.oneOfType([PropTypes.number, null]),
+  editingAnimeId: PropTypes.number,
   setEditingAnimeId: PropTypes.func.isRequired,
   editingAnimeName: PropTypes.string.isRequired,
   setEditingAnimeName: PropTypes.func.isRequired,

@@ -1,11 +1,55 @@
 const request = require('supertest');
 const app = require('../index');
 const db = require('../config/db');
+const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
 
 // Set test environment
 process.env.NODE_ENV = 'test';
 
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
+const JWT_EXPIRES_IN = '7d';
+
+// Helper function to create a user and get auth token
+async function getAuthToken() {
+  const response = await request(app)
+    .post('/api/auth/register')
+    .send({
+      username: `testuser_${Date.now()}`,
+      email: `test_${Date.now()}@example.com`,
+      password: 'password123'
+    });
+  
+  return response.body.data.token;
+}
+
+// Helper function to create an admin user and get admin auth token
+async function getAdminToken() {
+  const response = await request(app)
+    .post('/api/auth/register')
+    .send({
+      username: `admin_${Date.now()}`,
+      email: `admin_${Date.now()}@example.com`,
+      password: 'password123'
+    });
+  
+  const userId = response.body.data.user.id;
+  
+  // Make the user an admin in the database
+  await User.update(userId, { is_admin: 1 });
+  
+  // Create a new token with is_admin: 1
+  const adminToken = jwt.sign(
+    { id: userId, username: response.body.data.user.username, email: response.body.data.user.email, is_admin: 1 },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+  
+  return adminToken;
+}
+
 describe('Authentication API Endpoints', () => {
+  let authToken;
   
   // Setup: Tables are automatically created by db.js
   beforeAll(async () => {
@@ -367,12 +411,22 @@ describe('Authentication API Endpoints', () => {
       const response = await request(app)
         .post('/api/auth/register')
         .send({
-          username: 'testuser',
-          email: 'test@example.com',
+          username: `testuser_${Date.now()}`,
+          email: `test_${Date.now()}@example.com`,
           password: 'password123'
         });
       
-      token = response.body.data.token;
+      const userId = response.body.data.user.id;
+      
+      // Make the user an admin so they can create anime
+      await User.update(userId, { is_admin: 1 });
+      
+      // Create a new token with is_admin: 1
+      token = jwt.sign(
+        { id: userId, username: response.body.data.user.username, email: response.body.data.user.email, is_admin: 1 },
+        JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
+      );
     });
 
     test('Should allow creating anime with valid token', async () => {

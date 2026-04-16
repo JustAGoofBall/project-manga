@@ -27,10 +27,7 @@ Dit formulier is heel eenvoudig in te vullen. Je geeft feedback op **Justin's pr
 Voorbeeld: "De tests zijn heel uitgebreid en dekken veel cases"
 
 Jouw feedback:
-___________________________________________________________________
-___________________________________________________________________
-___________________________________________________________________
-```
+
 
 ---
 
@@ -57,9 +54,7 @@ ___________________________________________________________________
 Voorbeeld: "Voeg logging toe zodat je kunt zien wat er gebeurt"
 
 Jouw voorstel:
-___________________________________________________________________
-___________________________________________________________________
-___________________________________________________________________
+
 ```
 
 ---
@@ -72,10 +67,6 @@ Mijn score: [ ] / 10
 
 **Waarom deze score?**
 
-```
-___________________________________________________________________
-___________________________________________________________________
-```
 
 ---
 
@@ -89,4 +80,4 @@ Ik heb feedback gegeven op Justin's project.
 
 ---
 
-**Klaar?** → Stuur dit formulier naar Justin via email/Discord! 📧
+**Klaar?** → Stuur dit formulier naar Justin via ps238171@summacollege.nl📧

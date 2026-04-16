@@ -89,7 +89,7 @@ class User {
    * @returns {Promise<Object|null>} Updated user object or null if not found
    */
   static async update(id, updates) {
-    const allowedFields = ['username', 'email'];
+    const allowedFields = ['username', 'email', 'is_admin'];
     const updateFields = [];
     const values = [];
 
