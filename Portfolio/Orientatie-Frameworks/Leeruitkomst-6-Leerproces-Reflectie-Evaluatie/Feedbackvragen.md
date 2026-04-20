@@ -1,40 +1,19 @@
-# ❓ Feedbackvragen - Leeruitkomst 6: Leerproces Reflectie & Evaluatie
+# ❓ Feedbackvragen - Leeruitkomst 6: Reflectie & Evaluatie
 
-## Vraag 1: Persoonlijke Groei & Reflectie
-**Wat heb ik persoonlijk geleerd van dit project en hoe reflecteer ik hierop?**
+## Vraag 1: Wat heb ik persoonlijk geleerd en hoe reflecteer ik hierop?
 
-### 📌 Bewijslast in Project:
-- **Project Evolution**: Van simple CRUD naar complex API met auth, testing, logging, relaties
-- **Features Added**: Started basic → added 30+ endpoints, authentication, testing, security
-- **Code Quality**: Progression visible in structure - organized in MVC, proper error handling
-- **Learning Evidence**: Tests, validation, middleware, database schema design
-- **Documentation**: README, comments, portfolio docs tonen grondige kennis
-
-### Vragen:
-- Welke onderdelen van het project waren het meest leerrijk?
-- Hoe ben ik omgegaan met challenges en bugs?
-- Wat zou ik volgende keer beter/anders doen?
-- Welke skills heb ik het meest verbeterd?
+**Wat ik geleerd heb:** Van basis API naar complex systeem met auth, tests, logging
+**Bewijs:** Project groei, challenge overcome, debugging ervaring
+**Skills:** REST API design, React, database design, testing
 
 ---
 
-## Vraag 2: Feedback Integratie & Iteratie
-**Hoe effectief pas ik feedback toe en verbeter ik mijn werk?**
+## Vraag 2: Hoe integreer ik feedback en verbeter ik mezelf?
 
-### 📌 Bewijslast in Project:
-- **Testing Implementation**: Likely feedback → added 60+ tests met Jest
-- **Error Handling**: Better catch/handling of edge cases
-- **Documentation**: README en comments tonen iteration op communicatie
-- **Code Structure**: Clean MVC pattern suggests refactoring iterations
-- **Security**: JWT, bcrypt, error handler suggest security reviews
-- **Feedback Folder**: [Portfolio/Frameworks-Gevorderd/FEEDBACK-FORMULIER-VOOR-SAMIR.md](../../../../Portfolio/Frameworks-Gevorderd/FEEDBACK-FORMULIER-VOOR-SAMIR.md)
-
-### Vragen:
-- Hoe integreer ik jullie feedback in mijn development proces?
-- Welke feedback zou het meeste verschil maken?
-- Hoe kan ik feedback beter verzamelen en toepassen?
-- Wat is mijn action plan voor volgende iteraties?
+**Feedback tot nu toe:** [Portfolio/Frameworks-Gevorderd/FEEDBACK-FORMULIER-VOOR-SAMIR.md](../../../../Portfolio/Frameworks-Gevorderd/FEEDBACK-FORMULIER-VOOR-SAMIR.md)
+**Hoe ik verbeter:** Door tests toe te voegen, comments toe te voegen, structuur te verbeteren
+**Volgende:** Beter feedback verzamelen voor volgende project
 
 ---
 
-*Sturen naar: Docent Orientatie-Frameworks*
+*Stuur deze vragen naar: Docent Orientatie-Frameworks*
