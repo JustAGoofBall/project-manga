@@ -36,4 +36,4 @@
 
 ---
 
-*Sturen naar: Docent Frameworks-Gevorderd / Timo & Samir*
+*Sturen naar: Docent Frameworks-Gevorderd / Timo*

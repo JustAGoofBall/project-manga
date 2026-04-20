@@ -1,33 +1,19 @@
-# ❓ Feedbackvragen - Leeruitkomst 1: API's Bouwen Op Basis Endpoints
+# ❓ Feedbackvragen - Leeruitkomst 1: API's Bouwen
 
-## Vraag 1: Endpoint Design & RESTful Principes
-**Hoe goed voldoen de 30+ endpoints aan RESTful API-principes?**
+## Vraag 1: Zijn mijn REST endpoints correct gebouwd en georganiseerd?
 
-### 📌 Bewijslast in Project:
-- **Routes**: [routes/anime.js](../../../../routes/anime.js), [routes/auth.js](../../../../routes/auth.js), [routes/characters.js](../../../../routes/characters.js)
-- **Voorbeeld**: GET `api/anime` (getAll), GET `api/anime/:id` (getById), POST/PUT/DELETE (CRUD)
-- **Test Evidence**: [tests/anime.test.js](../../../../tests/anime.test.js) - 15 geautomatiseerde tests
-- **Coverage**: [coverage/lcov-report/index.html](../../../../coverage/lcov-report/index.html) - 85% code coverage
-
-### Vragen:
-- Zijn mijn resource routes correct gestructureerd? Voldoen ze aan REST conventions?
-- Heb ik de juiste HTTP-methoden gebruikt en status codes teruggegeven?
+**Wat ik heb:** 30+ endpoints in `/routes/`, gestructureerd per resource (anime, characters, auth, etc)
+**Code:** [routes/anime.js](../../../../routes/anime.js), [routes/auth.js](../../../../routes/auth.js)
+**Tests:** [tests/anime.test.js](../../../../tests/anime.test.js) (15 tests)
 
 ---
 
-## Vraag 2: Foutafhandeling & Input Validatie
-**Is mijn foutafhandeling in endpoints robuust genoeg?**
+## Vraag 2: Is mijn foutafhandeling goed genoeg voor production?
 
-### 📌 Bewijslast in Project:
-- **Controllers**: [controllers/animeController.js](../../../../controllers/animeController.js) - try/catch error handling
-- **Validators**: [validators/animeValidator.js](../../../../validators/animeValidator.js), [validators/authValidator.js](../../../../validators/authValidator.js)
-- **Example Error Response**: Status 400/404/500 met duidelijke error messages
-- **Tests**: [tests/errors.test.js](../../../../tests/errors.test.js) - error handling tests
-
-### Vragen:
-- Zijn mijn error messages specifiek genoeg? Helpen ze developers?
-- Heb ik alle edge cases getest? (invalid input, missing fields, wrong types)
+**Wat ik heb:** Try/catch in controllers, validators, error messages per endpoint
+**Code:** [controllers/animeController.js](../../../../controllers/animeController.js), [validators/animeValidator.js](../../../../validators/animeValidator.js)
+**Tests:** [tests/errors.test.js](../../../../tests/errors.test.js)
 
 ---
 
-*Sturen naar: Docent API-Basis*
+*Stuur deze vragen naar: Docent API-Basis*
