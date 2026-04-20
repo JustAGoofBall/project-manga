@@ -1,7 +1,7 @@
 # ❓ Feedbackvragen - Leeruitkomst 1: Geautomatiseerde Testen
 
 ## Vraag 1: Test Strategy & Coverage
-**Hoe robuust en compleet is mijn test suite voor een production applicatie?**
+**Hoe compleet is mijn test suite voor een redelijke webapp?**
 
 ### 📌 Bewijslast in Project:
 - **Test Suite**: [tests/anime.test.js](../../../../tests/anime.test.js), [tests/auth.test.js](../../../../tests/auth.test.js), [tests/characters.test.js](../../../../tests/characters.test.js), [tests/ratings.test.js](../../../../tests/ratings.test.js), [tests/favorites.test.js](../../../../tests/favorites.test.js)
@@ -12,7 +12,7 @@
 - **Test Output**: [test-results.txt](../../../../test-results.txt)
 
 ### Vragen:
-- Heb ik voldoende coverage (ik heb 80%+) voor alle critical paths?
+- Heb ik voldoende coverage (ik heb ongeveer 80%+) voor alle critical paths?
 - Welke soorten tests missen nog? (mutations, load testing, contract testing)
 - Hoe kan ik mijn coverage naar 90%+ brengen?
 

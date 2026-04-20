@@ -16,4 +16,3 @@
 
 ---
 
-*Stuur deze vragen naar: Docent API-Basis*

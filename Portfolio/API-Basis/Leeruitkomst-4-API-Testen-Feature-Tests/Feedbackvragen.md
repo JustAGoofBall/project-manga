@@ -15,5 +15,3 @@
 **Output:** [test-results.txt](../../../../test-results.txt)
 
 ---
-
-*Stuur deze vragen naar: Docent API-Basis*

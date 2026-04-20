@@ -12,7 +12,7 @@
 
 ---
 
-## Vraag 2: Hoe goed is mijn input validatie en error handling in endpoints?
+## Vraag 2: Hoe goed is mijn input validatie en error handling in endpoints? zijn er nog verbeterpunten?
 
 **Wat ik heb:** 
 - Input validators voor anime/character creation
@@ -23,5 +23,3 @@
 **Tests:** [tests/anime.test.js](../../../../tests/anime.test.js) - error cases
 
 ---
-
-*Stuur deze vragen naar: Docent API-Basis*
