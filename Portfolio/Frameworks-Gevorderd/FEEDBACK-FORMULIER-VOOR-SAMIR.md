@@ -70,14 +70,4 @@ Mijn score: [ ] / 10
 
 ---
 
-## ✅ HANDTEKENING
-
-Ik heb feedback gegeven op Justin's project.
-
-**Naam:** ______________________  
-**Datum:** ______________________  
-**Handtekening:** ______________________
-
----
-
 **Klaar?** → Stuur dit formulier naar Justin via ps238171@summacollege.nl📧
