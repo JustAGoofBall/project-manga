@@ -394,8 +394,8 @@ export default function AdminPanel() {
         currentPage={userCurrentPage}
         setCurrentPage={setUserCurrentPage}
         itemsPerPage={ITEMS_PER_PAGE}
-        search={search}
-        setSearch={setSearch}
+        search={userSearch}
+        setSearch={setUserSearch}
         sortBy={userSortBy}
         setSortBy={setUserSortBy}
         loading={loading}
