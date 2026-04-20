@@ -21,8 +21,6 @@
 - Frameworks-Gevorderd L1: "Zijn mijn tests goed geautomatiseerd en georganiseerd?"
 - Frameworks-Gevorderd L5: "Hoe heb ik feedback over test quality geïntegreerd?"
 
-💡 **Efficiencytip:** Toon alle 3 vragen aan Frameworks-Gevorderd docent, verwijz naar API-Basis tests als bewijs
-
 ---
 
 ## 📊 CLUSTER 2: Database Design & Relaties
@@ -33,15 +31,11 @@
 **Dezelfde bewijslast:**
 - **Database schema** → [schema.sql] toont 1-to-many (anime-characters) + many-to-many (user-favorites)
 - **Models implementatie** → [models/animeModel.js], [models/characterModel.js], [models/favoriteModel.js]
-- **Query optimalisatie** → LEFT JOIN queries, efficient data fetching
-- **ER diagram** → Plaats in `bewijslast/diagrams/` (eenmalig gemaakt, 3x gebruikt)
+- **Query optimalisatie** → efficient data fetching
 
 **Vragen stapelen:**
-- API-Basis L2: "Hoe goed zijn mijn database queries geoptimaliseerd?"
 - Orientatie-Frameworks L3: "Hoe gebruik ik het framework om relaties goed te beheren?"
 - Frameworks-Gevorderd L2: "Hoe goed zijn mijn business logic relaties ingecapsuleerd?"
-
-💡 **Efficiencytip:** Maak ER diagram eenmalig, gebruik voor alle 3. Schema.sql is hetzelfde voor iedereen.
 
 ---
 
@@ -61,7 +55,7 @@
 - API-Basis L2: "Zijn mijn authentication endpoints goed beveiligd?"
 - Frameworks-Gevorderd L4: "Hoe veilig zijn mijn JWT tokens en permissions ingecapsuleerd?"
 
-💡 **Efficiencytip:** Zelfde authMiddleware code/tests toont veiligheid aan voor beide leeruitkomsten
+Zelfde authMiddleware code/tests toont veiligheid aan voor beide leeruitkomsten, toen ik de test deed.
 
 ---
 
@@ -77,10 +71,9 @@
 - **Error handling centralized** → [middleware/errorHandler.js], [middleware/logger.js]
 
 **Vragen stapelen:**
-- Orientatie-Frameworks L4: "Hoe toepas ik MVC pattern correct?"
-- Frameworks-Gevorderd L3: "Hoe goed is mijn scheiding van verantwoordelijkheden?"
+- Orientatie-Frameworks L4: "Is het structuur van de mvc correct of moet ik ergens nog op letten wat ik misschien mis?"
+- Frameworks-Gevorderd L3: "Ben ik in mijn project consistent? of moet ik op een andere wijze werken van structuur."
 
-💡 **Efficiencytip:** Eenmalige MVC architectuur diagram + folder structure toont beide aan
 
 ---
 
@@ -97,9 +90,9 @@
 - **Trade-off analyse** → Database choices, framework keuzes uitgelegd
 
 **Vragen stapelen:**
-- API-Basis L3: "Hoe duidelijk is mijn API gedocumenteerd?"
+- API-Basis L3: "is mijn README goed gedocumenteerd?"
 - Orientatie-Frameworks L2: "Hoe goed heb ik documentatie begrepen en toegepast?"
-- Orientatie-Frameworks L5: "Hoe goed kan ik keuzes rechtvaardigen?"
+- Orientatie-Frameworks L5: "Zijn mijn ontwerp keuzes valid die ik heb gemaakt voor het project?"
 
 💡 **Efficiencytip:** README.md + AUTH-GUIDE.md gebruikt voor alle 3. Eenmalige framework justificatie doc.
 
@@ -134,7 +127,7 @@
 - **Iteratieve verbetering** → Code reviews → code changes → tests → repeat
 
 **Vragen stapelen:**
-- Orientatie-Frameworks L6: "Hoe goed integreer ik feedback in mijn leerproces?"
+- Orientatie-Frameworks L6: "Heb ik goed mijn feedback verwerkt?"
 - Frameworks-Gevorderd L5: "Hoe goed kan ik code review feedback implementeren?"
 
 💡 **Efficiencytip:** Dezelfde feedback verwerking logboek voor beide leeruitkomsten
