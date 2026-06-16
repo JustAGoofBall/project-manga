@@ -34,7 +34,7 @@
 - **Documentation**: JSDoc comments op test helper functies
 
 ### Vragen:
-1. **Hoe kan ik mijn tests sneller en DRY-er maken?** Zie je mogelijkheden om meer test helpers te créeren (bijv. `createTestAnime()`, `createTestRating()`), of kan ik tests beter groeperen om database operations te minimaliseren?
+1. **Hoe kan ik mijn tests sneller en DRY-er maken?** Zie je mogelijkheden om meer test helpers te créeren (bijv. `createTestAnime()`, `createTestRating()`), of kan ik tests beter groeperen om database operations te minimaliseren?  
 2. **Hoe test ik de performance van mijn code?** Moet ik tests toevoegen voor slow queries, of moet ik mijn database queries zelf optimaliseren voordat ik ze test?
 
 ---
@@ -96,6 +96,26 @@
 ### Vragen:
 1. **Waar verliest mijn code focus?** Zie je controllers die database queries doen (violation van model responsibility)? Of routes die business logic bevatten? Zijn er validators die je beter in model layer zou zetten?
 2. **Hoe voorkom ik dat my code spaghetti-tig wordt als het groeit?** Met meer endpoints, hoe zorg ik dat model/controller scheiding streng blijft? Heb ik guidelines nodig of architectural patterns?
+
+
+feedback van ron - 23-04-2026: In de router anime.js beperk je jezelf netjes tot de core business van een router. Endpoints afvangen, koppelen aan een controler methode met eventuele middleware.
+
+In de animeController.js beperk je jezelf qua logica puur tot validatielogica en directielogica (redirects, statuscodes teruggeven, etc.). Dit is erg netjes en ook precies waar de verantwoordelijkheid van de controller ophoudt. Nergens in jouw controller is dan ook businesslogica te vinden. Je spreekt netjes jouw modellen aan om de datalaag af te handelen. Mooie scheiding van verantwoordelijkheden!
+
+Jouw model Anime beperkt zichzelf keurig tot de businesslaag. Hier staan dus ook netjes al jouw queries. Qua naamgeving van bestanden een tip: vermijd "model" in een modelnaam te verwerken. Dan komt deze ook netjes overeen met de naam van de klasse.
+
+Vanuit de view AnimeDetail.jsx is geen harde koppeling te vinden naar een controller/model. Dit is precies wat je graag wil hebben, want nu is deze view herbruikbaar. Jouw view laat alleen verantwoordelijkheden zien die je ook verwacht binnen een view zoals foutmeldingen weergeven en data weergeven. Een mooi voorbeeld van een goede presentatielaag.
+
+Al met al zie ik hier een goede MVC structuur terug.
+
+Voor wat betreft jouw vraag m.b.t. spaghetti code:
+De grootste draak m.b.t. spaghetti code is gewoonweg het niet goed volgen van het MVC principe. Bijvoorbeeld een gigantisch lange controller methode, dan kan je er bijna vanuitgaan dat iemand hier business logic in heeft zitten, wat in de model zou moeten staan.
+
+Echter zijn er nog wat concrete tips die je toe zou kunnen passen:
+- Zorg dat validatielogica uit de controllers gaat en in losse request validators terecht komen
+- File/mappenstructuur views: maak een map aan per model, bijvoorbeeld een map "anime" waarin dan de views "index", "show", "create" en "edit" zitten.
+- Grote models? Kijk dan eens naar een repository patern of maak gebruik van een service.
+- Kijk ook eens naar hoe je bloaters oplost. (https://refactoring.guru/smells/long-method)
 
 ---
 

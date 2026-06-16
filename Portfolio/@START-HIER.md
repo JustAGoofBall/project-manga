@@ -126,7 +126,7 @@ Formats Gebruikt:
 
 ## ✅ Verificatie
 
-Want je geloofd me niet zomaar? :)
+Wat commands voor je om te testen.
 
 ```bash
 # In Project Root

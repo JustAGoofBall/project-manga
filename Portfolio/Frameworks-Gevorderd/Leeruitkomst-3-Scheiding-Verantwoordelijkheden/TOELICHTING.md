@@ -1,23 +1,25 @@
 # 🎯 Leeruitkomst 3: Scheiding van Verantwoordelijkheden
+*Ik scheid verantwoordelijkheden consistent in code en snap het belang hiervan.*
 
 ## Wat Ik Toon
-Ik demonstreer dat ik **verantwoordelijkheden consequent scheid**:
-- Models: Database access only
-- Controllers: Business logic only
-- Routes: URL routing only
-- Middleware: Cross-cutting concerns only
-- Validators: Input validation only
+Ik demonstreer dat ik een **strikt MVC/layered architecture** volg met duidelijke scheiding:
+- **Models:** Database queries ONLY (no HTTP logic)
+- **Controllers:** Business logic orchestration (no database calls, no validation)
+- **Routes:** URL mapping & middleware stacking (no business logic)
+- **Middleware:** Cross-cutting concerns (auth, error handling, logging)
+- **Validators:** Input validation ONLY (no database access)
+- **Result:** Clean, testable, maintainable code
 
 **Bewijs:**
-- Duidelijke folder structuur
-- Elk bestand heeft 1 verantwoordelijkheid
-- Geen code duplication
-- Makkelijk om te testen en maintainen
+- Geen code duplication (reusable validators)
+- Makkelijk testbaar (mocken per layer)
+- Clear separation (één verantwoordelijkheid per file)
+- **Feedback from Ron (2026-04-23):** "Excellent MVC structure"
 
 ## Hoe Dit In Mijn Project Zichtbaar Is
-- **Models:** [models/](../../../models/) 
-- **Controllers:** [controllers/](../../../controllers/)
-- **Routes:** [routes/](../../../routes/)
-- **Middleware:** [middleware/](../../../middleware/)
-- **Validators:** [validators/](../../../validators/)
-- **Demonstratie:** Zie [VERANTWOORDELIJKHEDEN.md](VERANTWOORDELIJKHEDEN.md)
+- **Models:** [models/](../../../models/) (5 classes) - Pure database access only
+- **Controllers:** [controllers/](../../../controllers/) (5 files) - Orchestration only
+- **Routes:** [routes/](../../../routes/) (6 files) - URL mapping only
+- **Middleware:** [middleware/](../../../middleware/) (3 files) - Cross-cutting concerns
+- **Validators:** [validators/](../../../validators/) (5 files) - Input validation only
+- **Demonstratie:** Zie [VERANTWOORDELIJKHEDEN.md](VERANTWOORDELIJKHEDEN.md) voor complete before/after examples
