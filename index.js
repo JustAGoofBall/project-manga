@@ -42,6 +42,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ========== MIDDLEWARE ==========
+app.set('json spaces', 2);     // Pretty-print JSON responses
 app.use(cors());               // CORS - allow cross-origin requests
 app.use(express.json());
 app.use(logger);               // Request/Response logging
