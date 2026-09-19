@@ -1,30 +1,14 @@
 /**
  * Favorite Validator
- * Validates favorite-related input data
+ *
+ * A favorite is identified by the anime it points at, so the only thing to
+ * check is the anime ID. Reuses the anime validator so the two can never
+ * disagree about what a valid ID looks like.
  */
 
-/**
- * Validate anime ID for favorites
- * @param {string|number} id - Anime ID to validate
- * @throws {Error} If validation fails
- * @returns {number} Validated ID as number
- */
-const validateFavoriteAnimeId = (id) => {
-  const numId = Number(id);
+const { validateAnimeId } = require('./animeValidator');
 
-  if (isNaN(numId)) {
-    const error = new Error('Invalid anime ID format');
-    error.status = 400;
-    throw error;
-  }
-
-  if (numId <= 0 || !Number.isInteger(numId)) {
-    const error = new Error('Anime ID must be a positive integer');
-    error.status = 400;
-    throw error;
-  }
-
-  return numId;
-};
+/** Anime ID from POST/DELETE /api/favorites/:animeId */
+const validateFavoriteAnimeId = (id) => validateAnimeId(id);
 
 module.exports = { validateFavoriteAnimeId };
