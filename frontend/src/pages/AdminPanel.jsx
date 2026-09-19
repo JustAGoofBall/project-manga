@@ -405,7 +405,6 @@ export default function AdminPanel() {
 
       <AdminCharactersSection
         filteredCharacters={filteredCharacters}
-        characters={characters}
         animes={animes}
         currentPage={characterCurrentPage}
         setCurrentPage={setCharacterCurrentPage}

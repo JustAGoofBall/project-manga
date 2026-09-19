@@ -20,7 +20,7 @@ export default function Home() {
       if (!res.ok) throw new Error(`Server error: ${res.status}`);
       const data = await res.json();
       setAnime(data.data || []);
-    } catch (e) {
+    } catch {
       setError('Kon anime niet laden. Is de backend actief?');
     } finally {
       setLoading(false);
