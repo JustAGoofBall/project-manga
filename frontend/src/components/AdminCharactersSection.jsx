@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 
 export default function AdminCharactersSection({
   filteredCharacters,
-  characters,
   animes,
   currentPage,
   setCurrentPage,
@@ -177,7 +176,6 @@ export default function AdminCharactersSection({
 
 AdminCharactersSection.propTypes = {
   filteredCharacters: PropTypes.array.isRequired,
-  characters: PropTypes.array.isRequired,
   animes: PropTypes.array.isRequired,
   currentPage: PropTypes.number.isRequired,
   setCurrentPage: PropTypes.func.isRequired,

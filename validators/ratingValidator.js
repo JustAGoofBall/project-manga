@@ -1,61 +1,60 @@
 /**
  * Rating Validator
- * Validates rating-related input data
+ *
+ * A rating is a score from 1 to 10, with an optional written review.
  */
+
+const { badRequest } = require('../utils/validate');
+
+const MIN_RATING = 1;
+const MAX_RATING = 10;
+const MAX_REVIEW_LENGTH = 1000;
 
 /**
- * Validate rating value
- * @param {*} rating - Rating value to validate (must be 1-10)
- * @throws {Error} If validation fails
- * @returns {number} Validated rating as integer
+ * Score: a whole number from 1 to 10. Required.
+ *
+ * @param {*} rating - Raw value from req.body.rating
+ * @returns {number} The score as a real number
  */
 const validateRating = (rating) => {
+  // Checked explicitly because 0 is falsy but still worth its own message.
   if (rating === undefined || rating === null) {
-    const error = new Error('Rating is required');
-    error.status = 400;
-    throw error;
+    throw badRequest('Rating is required');
   }
 
-  const num = Number(rating);
+  const score = Number(rating);
 
-  if (isNaN(num) || !Number.isInteger(num)) {
-    const error = new Error('Rating must be an integer');
-    error.status = 400;
-    throw error;
+  if (isNaN(score) || !Number.isInteger(score)) {
+    throw badRequest('Rating must be an integer');
   }
 
-  if (num < 1 || num > 10) {
-    const error = new Error('Rating must be between 1 and 10');
-    error.status = 400;
-    throw error;
+  if (score < MIN_RATING || score > MAX_RATING) {
+    throw badRequest(`Rating must be between ${MIN_RATING} and ${MAX_RATING}`);
   }
 
-  return num;
+  return score;
 };
 
 /**
- * Validate review text (optional)
- * @param {*} review - Review text to validate
- * @throws {Error} If validation fails
- * @returns {string|null} Validated review or null
+ * Review text. Optional - leaving it out is fine.
+ *
+ * @param {*} review - Raw value from req.body.review
+ * @returns {string|null} The trimmed review, or null when there is none
  */
 const validateReview = (review) => {
   if (review === undefined || review === null) return null;
 
   if (typeof review !== 'string') {
-    const error = new Error('Review must be a string');
-    error.status = 400;
-    throw error;
+    throw badRequest('Review must be a string');
   }
 
   const trimmed = review.trim();
 
-  if (trimmed.length > 1000) {
-    const error = new Error('Review must be less than 1000 characters');
-    error.status = 400;
-    throw error;
+  if (trimmed.length > MAX_REVIEW_LENGTH) {
+    throw badRequest(`Review must be less than ${MAX_REVIEW_LENGTH} characters`);
   }
 
+  // An empty string counts as "no review".
   return trimmed || null;
 };
 

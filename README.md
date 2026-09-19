@@ -1,234 +1,282 @@
-# 🎌 Project Manga - Anime API
+# Project Manga — Anime API
 
-A professional REST API for managing anime, characters, ratings, and user favorites with complete authentication and authorization.
+A REST API for anime, characters, ratings and favorites, with JWT login and an
+admin panel. Backend is Express + SQLite; frontend is React (Vite).
 
-## 📋 Features
+![CI](https://github.com/JustAGoofBall/project-manga/actions/workflows/ci.yml/badge.svg)
 
-- **User Authentication** - JWT-based login/registration with bcrypt password hashing
-- **Anime Management** - Create, read, update, delete anime entries
-- **Characters** - Manage characters linked to anime
-- **Ratings & Reviews** - Users can rate and review anime (1-10 scale)
-- **Favorites** - Users can save their favorite anime
-- **Search** - Query anime by name
-- **Advanced Logging** - Multi-level logging (INFO, WARN, ERROR) with file and console output
-- **Comprehensive Tests** - 80+ automated tests with full coverage
-- **Professional Architecture** - MVC pattern following industry standards
+---
 
-## 🚀 Quick Start
+## Quick start
 
-### Installation
 ```bash
+npm install          # install backend dependencies
+npm run seed         # fill the database with sample anime + characters
+npm run seed:users   # create the demo accounts (see below)
+npm run dev          # start the API on http://localhost:3000
+```
+
+Open <http://localhost:3000> and the API describes its own endpoints.
+
+For the frontend, in a second terminal:
+
+```bash
+cd frontend
 npm install
+npm run dev          # http://localhost:5173
 ```
 
-### Start the Server
+### Demo accounts
+
+`npm run seed:users` creates two accounts for local testing:
+
+| Role  | Email                   | Password       |
+|-------|-------------------------|----------------|
+| Admin | testadmin@example.com   | testadmin123   |
+| User  | testuser@example.com    | testuser123    |
+
+These are local development accounts only — do not deploy with them.
+
+---
+
+## How a request travels through the code
+
+This is the single most useful thing to understand about the project. Every
+request follows the same path, and each folder has exactly one job:
+
+```
+   HTTP request  (e.g. POST /api/anime/1/ratings)
+        |
+        v
+  middleware/logger.js       writes the request to the console and logs/
+        |
+        v
+  rate limiters (index.js)   blocks callers who hammer the API
+        |
+        v
+  routes/*.js                matches the URL, and runs the auth guards
+        |
+        v
+  controllers/*.js           validates input, decides the response
+        |
+        v
+  models/*.js                the ONLY place that writes SQL
+        |
+        v
+  config/db.js               the SQLite database file
+```
+
+If nothing matched the URL, or something threw, `middleware/errorHandler.js`
+turns it into clean JSON instead of an HTML stack trace.
+
+**The rule that keeps this readable:** controllers never write SQL, and models
+never touch `req` or `res`. If you need a new endpoint, you add a line to a
+route, a function to a controller, and a query to a model — in that order.
+
+---
+
+## Project structure
+
+```
+index.js                 Wires the app together. Read this first.
+config/
+  db.js                  Opens SQLite, creates tables, and makes SQLite
+                         look like MySQL to the models (explained in-file)
+  jwt.js                 The JWT secret and expiry, in one place
+  data.js                Sample anime used by the seed script
+  apiDocs.js             The JSON that GET / returns
+routes/                  URL -> controller, plus the auth guards
+controllers/             Validates input and shapes the response
+models/                  All SQL lives here
+validators/              Input rules; throw a 400 when input is bad
+middleware/
+  authMiddleware.js      Reads the token, and the admin check
+  errorHandler.js        404 and 500 handling
+  logger.js              Request/response logging
+utils/
+  validate.js            Shared validation building blocks
+  sendError.js           Turns a thrown error into the right HTTP status
+tests/                   Jest + supertest (138 tests)
+frontend/                React app (Vite)
+```
+
+---
+
+## Authentication
+
+Login returns a JWT. Send it on protected routes:
+
+```
+Authorization: Bearer <your-token>
+```
+
+Endpoints are marked in three levels:
+
+- **public** — anyone
+- **[AUTH]** — any logged-in user
+- **[ADMIN]** — a user with `is_admin = 1`
+
 ```bash
-npm start
+# register, then use the token that comes back
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"johndoe","email":"john@example.com","password":"password123"}'
 ```
 
-### Run Tests
+---
+
+## API endpoints
+
+### Auth
+| Method | Path | Access | Description |
+|---|---|---|---|
+| POST | `/api/auth/register` | public | Create an account |
+| POST | `/api/auth/login` | public | Log in, returns a token |
+| GET | `/api/auth/me` | AUTH | Your profile |
+| PUT | `/api/auth/me` | AUTH | Update your profile |
+| DELETE | `/api/auth/me` | AUTH | Delete your account |
+
+### Anime & characters
+| Method | Path | Access | Description |
+|---|---|---|---|
+| GET | `/api/anime` | public | All anime, with characters |
+| GET | `/api/anime/:id` | public | One anime |
+| POST | `/api/anime` | ADMIN | Create an anime |
+| PUT | `/api/anime/:id` | ADMIN | Rename an anime |
+| DELETE | `/api/anime/:id` | ADMIN | Delete an anime |
+| GET | `/api/anime/:animeId/characters` | public | Characters of an anime |
+| GET | `/api/anime/:animeId/characters/:characterId` | public | One character |
+| POST | `/api/anime/:animeId/characters` | ADMIN | Add a character |
+| PUT | `/api/anime/:animeId/characters/:characterId` | ADMIN | Rename a character |
+| DELETE | `/api/anime/:animeId/characters/:characterId` | ADMIN | Delete a character |
+
+### Ratings & favorites
+| Method | Path | Access | Description |
+|---|---|---|---|
+| GET | `/api/anime/:animeId/ratings` | public | Ratings + average score |
+| POST | `/api/anime/:animeId/ratings` | AUTH | Rate an anime (1–10) |
+| PUT | `/api/anime/:animeId/ratings/:ratingId` | AUTH | Update your rating |
+| DELETE | `/api/anime/:animeId/ratings/:ratingId` | AUTH | Delete your rating |
+| GET | `/api/ratings/me` | AUTH | Your own ratings |
+| GET | `/api/favorites` | AUTH | Your favorites |
+| POST | `/api/favorites/:animeId` | AUTH | Add a favorite |
+| DELETE | `/api/favorites/:animeId` | AUTH | Remove a favorite |
+
+### Search & admin
+| Method | Path | Access | Description |
+|---|---|---|---|
+| GET | `/api/search?q=naruto` | public | Search anime by name |
+| GET | `/api/admin/users` | ADMIN | List users |
+| PUT | `/api/admin/users/:id/admin` | ADMIN | Grant/revoke admin |
+| DELETE | `/api/admin/users/:id` | ADMIN | Delete a user |
+
+### Response shape
+
+Every response uses the same envelope, so the frontend can handle them uniformly:
+
+```jsonc
+// success
+{ "success": true, "count": 2, "data": [ /* ... */ ] }
+
+// failure
+{ "success": false, "message": "Anime name is required" }
+```
+
+| Status | Meaning |
+|---|---|
+| 400 | The request was invalid (a validator rejected it) |
+| 401 | No token, or a bad one |
+| 403 | Logged in, but not allowed (e.g. not an admin) |
+| 404 | No such record |
+| 409 | Conflict — it already exists |
+| 500 | Something broke on the server |
+
+---
+
+## Environment variables
+
+Copy `.env.example` to `.env` and fill it in. `.env` is gitignored and must
+never be committed.
+
+| Variable | Required | Notes |
+|---|---|---|
+| `PORT` | no | Defaults to 3000 |
+| `NODE_ENV` | no | `development`, `production` or `test` |
+| `JWT_SECRET` | **in production** | Without it the API falls back to a default that is public in `config/jwt.js`, so anyone could forge a login token |
+
+Generate a secret with:
+
 ```bash
-npm test                # Run all tests
-npm run test:watch      # Watch mode
-npm run test:coverage   # With coverage report
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 ```
 
-### Seed Database
+---
+
+## Testing
+
 ```bash
-npm run seed
+npm test               # all 138 tests
+npm run test:watch     # re-run on change
+npm run test:coverage  # coverage report in coverage/
 ```
 
-## 📋 Project Structure
+Tests use a separate database file (`config/anime_test.db`), so running them
+never touches your real data. Jest sets `NODE_ENV=test`, which is what
+`config/db.js` checks to pick that file.
 
-```
-├── index.js                    # Entry point
-├── routes/                     # API endpoints
-│   ├── anime.js
-│   ├── characters.js
-│   ├── auth.js
-│   └── search.js
-├── controllers/                # Business logic
-│   ├── animeController.js
-│   ├── characterController.js
-│   └── authController.js
-├── models/                     # Database operations
-│   ├── animeModel.js
-│   ├── characterModel.js
-│   └── userModel.js
-├── middleware/                 # Express middleware
-│   ├── logger.js
-│   ├── errorHandler.js
-│   └── authMiddleware.js
-├── config/                     # Configuration
-│   └── db.js
-├── validators/                 # Input validation
-│   └── authValidator.js
-├── tests/                      # Automated tests
-└── logs/                       # Log files (auto-generated)
-```
+They run one file at a time (`--runInBand`), because they share that one
+database and would otherwise fight over the same rows.
 
-## 🔐 Authentication
+CI runs the backend tests plus a frontend lint and build on every push.
 
-### Register a User
+---
+
+## Docker
+
 ```bash
-POST /api/auth/register
-Content-Type: application/json
-
-{
-  "username": "johndoe",
-  "email": "john@example.com",
-  "password": "password123"
-}
+docker compose up --build
 ```
 
-### Login
-```bash
-POST /api/auth/login
-Content-Type: application/json
+- API: <http://localhost:3000>
+- Frontend: <http://localhost:5173>
 
-{
-  "email": "john@example.com",
-  "password": "password123"
-}
-```
+> **Note:** the API currently stores its data in a SQLite file, so the `db`
+> (MySQL) service in `docker-compose.yaml` is not actually used by the backend
+> yet. It and `schema.sql` are there for a planned move to MySQL. Until then
+> you can start just the app with
+> `docker compose up backend frontend`.
 
-### Get Profile (Protected)
-```bash
-GET /api/auth/me
-Authorization: Bearer YOUR_TOKEN_HERE
-```
+---
 
-## 📚 API Endpoints
+## Tech stack
 
-### Anime
-- `GET /api/anime` - List all anime with characters
-- `GET /api/anime/:id` - Get specific anime
-- `POST /api/anime` - Create anime (requires authentication)
-- `PUT /api/anime/:id` - Update anime (requires authentication)
-- `DELETE /api/anime/:id` - Delete anime (requires authentication)
+| Layer | Choice |
+|---|---|
+| Runtime | Node.js 20 |
+| Framework | Express 5 |
+| Database | SQLite (better-sqlite3) |
+| Auth | JWT (jsonwebtoken) + bcryptjs |
+| Testing | Jest + supertest |
+| Frontend | React 18 + Vite + React Router |
 
-### Characters
-- `GET /api/anime/:animeId/characters` - List characters
-- `GET /api/anime/:animeId/characters/:characterId` - Get character
-- `POST /api/anime/:animeId/characters` - Create character (requires authentication)
-- `PUT /api/anime/:animeId/characters/:characterId` - Update character (requires authentication)
-- `DELETE /api/anime/:animeId/characters/:characterId` - Delete character (requires authentication)
+---
 
-### Search
-- `GET /api/search?q=query` - Search anime by name
+## Troubleshooting
 
-### User Profile
-- `GET /api/auth/me` - Get current user profile (protected)
-- `PUT /api/auth/me` - Update profile (protected)
+**"No authorization token provided"** — add the header `Authorization: Bearer <token>`.
 
-## 🔒 Security Features
+**"Invalid token" / "Token expired"** — log in again; tokens last 7 days.
 
-- **Password Hashing** - Bcrypt with 10 salt rounds
-- **JWT Tokens** - Secure token-based authentication with 7-day expiration
-- **Input Validation** - Email, username, and password validation
-- **Protected Routes** - Authorization middleware for POST/PUT/DELETE operations
-- **SQL Injection Prevention** - Prepared statements for all queries
-- **Error Handling** - Comprehensive error messages and proper HTTP status codes
+**"Admin access required"** — the endpoint is admin-only. Promote a user with
+`npm run seed:users`, or via `PUT /api/admin/users/:id/admin` as an existing admin.
 
-## 📊 Database Schema
+**Tests fail after an interrupted run** — delete `config/anime_test.db` and re-run.
 
-### Users Table
-```sql
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(50) UNIQUE NOT NULL,
-  email VARCHAR(100) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-```
+**Frontend shows "Kon anime niet laden"** — the backend is not running, or is on
+a different port than the Vite proxy expects (see `frontend/vite.config.js`).
 
-### Ratings Table
-```sql
-CREATE TABLE ratings (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  anime_id INT NOT NULL,
-  rating INT CHECK (rating BETWEEN 1 AND 10),
-  review TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE,
-  UNIQUE KEY unique_user_anime (user_id, anime_id)
-);
-```
+---
 
-### Favorites Table
-```sql
-CREATE TABLE favorites (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  anime_id INT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (anime_id) REFERENCES anime(id) ON DELETE CASCADE,
-  UNIQUE KEY unique_user_favorite (user_id, anime_id)
-);
-```
+## License
 
-## 📝 Logging
-
-The API includes comprehensive logging:
-
-### Console Output
-```
-[REQUEST] POST /api/anime - IP: ::1
-  Body: {"name":"Demon Slayer"}
-[RESPONSE] POST /api/anime - 201 - 15ms
-```
-
-### File Logs
-Daily log files in `logs/` directory with timestamps, levels (INFO/WARN/ERROR), and full request/response details.
-
-## ✅ Testing
-
-Run the test suite:
-```bash
-npm test
-```
-
-Features:
-- 80+ automated tests
-- Auth tests (registration, login, profile)
-- CRUD operation tests
-- Error handling tests
-- Full test coverage reports available
-
-## 🛠️ Tech Stack
-
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MySQL
-- **Authentication**: JWT + Bcrypt
-- **Testing**: Jest
-- **Logging**: Custom logger with file and console output
-
-## 📖 Architecture
-
-This project follows the **MVC (Model-View-Controller)** pattern:
-
-- **Models** - Database access layer (data operations only)
-- **Controllers** - Business logic and request handling
-- **Routes** - URL mapping and endpoint definitions
-- **Middleware** - Cross-cutting concerns (logging, auth, error handling)
-
-## ❓ Troubleshooting
-
-### "No authorization token provided"
-- Add the `Authorization` header with format: `Bearer YOUR_TOKEN`
-
-### "Invalid token"
-- Token is incorrect or corrupted. Login again to get a fresh token.
-
-### "Token expired"
-- Tokens expire after 7 days. Login again to get a new token.
-
-### Database errors
-- Ensure the database schema is set up correctly
-- Check database connection in your environment variables
+MIT — see [LICENSE](LICENSE).

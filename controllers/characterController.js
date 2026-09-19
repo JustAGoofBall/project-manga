@@ -1,29 +1,33 @@
+/**
+ * Character Controller
+ *
+ * WHERE THIS SITS IN THE REQUEST FLOW
+ *   routes/characters.js  ->  THIS FILE  ->  models/characterModel.js  ->  database
+ *
+ * Every character belongs to exactly one anime, so all of these routes are
+ * nested under an anime: /api/anime/:animeId/characters/...
+ * That means we always validate the anime ID as well as the character ID.
+ */
+
 const Character = require('../models/characterModel');
 const { validateCharacterName, validateCharacterId } = require('../validators/characterValidator');
 const { validateAnimeId } = require('../validators/animeValidator');
+const sendError = require('../utils/sendError');
 
 /**
- * Character Controller
- * Handles all character-related requests
- */
-
-/**
- * Get all characters from a specific anime
+ * List every character of one anime.
  * GET /api/anime/:animeId/characters
  */
 exports.getCharactersByAnime = async (req, res) => {
   try {
-    // Validate anime ID
     const animeId = validateAnimeId(req.params.animeId);
+
+    // Returns null when the anime itself does not exist.
     const result = await Character.getAllByAnime(animeId);
-    
     if (!result) {
-      return res.status(404).json({
-        success: false,
-        message: 'Anime not found'
-      });
+      return res.status(404).json({ success: false, message: 'Anime not found' });
     }
-    
+
     res.json({
       success: true,
       anime: result.anime,
@@ -31,177 +35,103 @@ exports.getCharactersByAnime = async (req, res) => {
       data: result.characters
     });
   } catch (error) {
-    // Handle validation errors
-    if (error.status === 400) {
-      return res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-    res.status(500).json({
-      success: false,
-      message: 'Database error',
-      error: error.message
-    });
+    sendError(res, error);
   }
 };
 
 /**
- * Get a specific character from a specific anime
+ * Get one character of one anime.
  * GET /api/anime/:animeId/characters/:characterId
  */
 exports.getCharacterById = async (req, res) => {
   try {
-    // Validate IDs
     const animeId = validateAnimeId(req.params.animeId);
     const characterId = validateCharacterId(req.params.characterId);
+
     const result = await Character.getById(animeId, characterId);
-    
     if (!result) {
-      return res.status(404).json({
-        success: false,
-        message: 'Character not found'
-      });
+      return res.status(404).json({ success: false, message: 'Character not found' });
     }
-    
+
     res.json({
       success: true,
       anime: result.anime,
       data: result.character
     });
   } catch (error) {
-    // Handle validation errors
-    if (error.status === 400) {
-      return res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-    res.status(500).json({
-      success: false,
-      message: 'Database error',
-      error: error.message
-    });
+    sendError(res, error);
   }
 };
 
 /**
- * Create a new character for an anime
- * POST /api/anime/:animeId/characters
- * Body: { name: string }
+ * Add a character to an anime.
+ * POST /api/anime/:animeId/characters      Body: { name: string }
+ * Admin only - see routes/characters.js.
  */
 exports.createCharacter = async (req, res) => {
   try {
-    // Validate anime ID and character name
     const animeId = validateAnimeId(req.params.animeId);
-    const validatedName = validateCharacterName(req.body.name);
-    
-    const character = await Character.create(animeId, validatedName);
-    
+    const name = validateCharacterName(req.body.name);
+
+    // Returns null when the parent anime does not exist.
+    const character = await Character.create(animeId, name);
     if (!character) {
-      return res.status(404).json({
-        success: false,
-        message: 'Anime not found'
-      });
+      return res.status(404).json({ success: false, message: 'Anime not found' });
     }
-    
+
     res.status(201).json({
       success: true,
       message: 'Character created successfully',
       data: character
     });
   } catch (error) {
-    // Handle validation errors
-    if (error.status === 400) {
-      return res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-    res.status(500).json({
-      success: false,
-      message: 'Database error',
-      error: error.message
-    });
+    sendError(res, error);
   }
 };
 
 /**
- * Update a character
- * PUT /api/anime/:animeId/characters/:characterId
- * Body: { name: string }
+ * Rename a character.
+ * PUT /api/anime/:animeId/characters/:characterId    Body: { name: string }
+ * Admin only.
  */
 exports.updateCharacter = async (req, res) => {
   try {
-    // Validate IDs and name
     const animeId = validateAnimeId(req.params.animeId);
     const characterId = validateCharacterId(req.params.characterId);
-    const validatedName = validateCharacterName(req.body.name);
-    
-    const character = await Character.update(animeId, characterId, validatedName);
-    
+    const name = validateCharacterName(req.body.name);
+
+    const character = await Character.update(animeId, characterId, name);
     if (!character) {
-      return res.status(404).json({
-        success: false,
-        message: 'Character not found'
-      });
+      return res.status(404).json({ success: false, message: 'Character not found' });
     }
-    
+
     res.json({
       success: true,
       message: 'Character updated successfully',
       data: character
     });
   } catch (error) {
-    // Handle validation errors
-    if (error.status === 400) {
-      return res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-    res.status(500).json({
-      success: false,
-      message: 'Database error',
-      error: error.message
-    });
+    sendError(res, error);
   }
 };
 
 /**
- * Delete a character
+ * Delete a character.
  * DELETE /api/anime/:animeId/characters/:characterId
+ * Admin only.
  */
 exports.deleteCharacter = async (req, res) => {
   try {
-    // Validate IDs
     const animeId = validateAnimeId(req.params.animeId);
     const characterId = validateCharacterId(req.params.characterId);
+
     const deleted = await Character.delete(animeId, characterId);
-    
     if (!deleted) {
-      return res.status(404).json({
-        success: false,
-        message: 'Character not found'
-      });
+      return res.status(404).json({ success: false, message: 'Character not found' });
     }
-    
-    res.json({
-      success: true,
-      message: 'Character deleted successfully'
-    });
+
+    res.json({ success: true, message: 'Character deleted successfully' });
   } catch (error) {
-    // Handle validation errors
-    if (error.status === 400) {
-      return res.status(400).json({
-        success: false,
-        message: error.message
-      });
-    }
-    res.status(500).json({
-      success: false,
-      message: 'Database error',
-      error: error.message
-    });
+    sendError(res, error);
   }
 };

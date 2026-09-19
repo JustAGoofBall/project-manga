@@ -1,3 +1,34 @@
+# ---- Dependencies ----
+# Never commit installed packages. Anyone can rebuild them from
+# package.json + package-lock.json by running `npm install`.
+node_modules/
+
+# ---- Environment / secrets ----
+# .env holds machine-specific config and secrets.
+# Commit .env.example instead (same keys, no real values).
+.env
+.env.local
+.env.*.local
+
+# ---- Databases ----
+# SQLite files are generated at runtime by config/db.js.
 *.db
-anime.db
-anime_test.db
+*.sqlite
+*.sqlite3
+
+# ---- Generated output ----
+coverage/
+logs/
+*.log
+test-output.txt
+test-results.txt
+final-test-results.txt
+dist/
+build/
+
+# ---- Editor / OS noise ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

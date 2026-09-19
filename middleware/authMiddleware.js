@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken');
-
-// JWT Secret - should match the one in authController
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
+const { JWT_SECRET } = require('../config/jwt');
 
 /**
  * Authentication Middleware

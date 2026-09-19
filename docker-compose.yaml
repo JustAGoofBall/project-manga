@@ -1,7 +1,15 @@
 # syntax=docker/compose:1
+#
+# NOTE: the backend currently stores its data in a SQLite file (see
+# config/db.js), so it does NOT connect to the `db` service below and the
+# DB_* variables on the backend service are unused. Both are kept ready for
+# the planned move to MySQL, which is also what schema.sql is for.
+#
+# To run just the app without MySQL:
+#   docker compose up backend frontend
 
 services:
-  # MySQL Database
+  # MySQL Database - not used by the backend yet, see the note above.
   db:
     image: mysql:8.0
     container_name: manga_db
@@ -28,6 +36,7 @@ services:
     ports:
       - "3000:3000"
     environment:
+      # DB_* are read by nothing today - see the note at the top of this file.
       DB_HOST: db
       DB_USER: root
       DB_PASSWORD: root
@@ -35,6 +44,9 @@ services:
       DB_PORT: 3306
       PORT: 3000
       NODE_ENV: production
+      # Signs login tokens. Override this with a real secret before
+      # putting this anywhere public.
+      JWT_SECRET: ${JWT_SECRET:-change-me-before-deploying}
     depends_on:
       db:
         condition: service_healthy

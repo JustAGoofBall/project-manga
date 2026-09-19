@@ -1,15 +1,16 @@
 {
   "name": "anime-api",
   "version": "1.0.0",
-  "description": "RESTful Anime Characters API",
+  "description": "RESTful Anime API - anime, characters, ratings and favorites with JWT auth",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch --runInBand",
+    "test:coverage": "jest --coverage --runInBand",
     "seed": "node seed/seed.js",
-    "test": "set NODE_ENV=test&& jest --verbose --runInBand",
-    "test:watch": "set NODE_ENV=test&& jest --watch --runInBand",
-    "test:coverage": "set NODE_ENV=test&& jest --coverage --runInBand"
+    "seed:users": "node scripts/seed.js"
   },
   "keywords": [
     "anime",
@@ -18,7 +19,7 @@
     "characters"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.6.2",

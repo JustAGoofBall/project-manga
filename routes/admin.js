@@ -1,108 +1,27 @@
+/**
+ * Admin routes - /api/admin/...
+ *
+ * Every route here runs two guards, in this order:
+ *   authMiddleware  - is there a valid token? (401 if not)
+ *   adminMiddleware - is that user an admin?  (403 if not)
+ */
+
 const express = require('express');
 const router = express.Router();
+const adminController = require('../controllers/adminController');
 const { authMiddleware, adminMiddleware } = require('../middleware/authMiddleware');
-const User = require('../models/userModel');
 
-// Get all users (admin only)
-router.get('/users', authMiddleware, adminMiddleware, async (req, res) => {
-  try {
-    const users = await User.getAll();
-    res.json({
-      success: true,
-      data: users
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error fetching users',
-      error: error.message
-    });
-  }
-});
+// Applies both guards to every route defined in this file,
+// so they do not have to be repeated on each line below.
+router.use(authMiddleware, adminMiddleware);
 
-// Toggle admin status for a user (admin only)
-router.put('/users/:id/admin', authMiddleware, adminMiddleware, async (req, res) => {
-  try {
-    const userId = parseInt(req.params.id);
-    const { is_admin } = req.body;
+// GET /api/admin/users - list all users
+router.get('/users', adminController.getAllUsers);
 
-    if (typeof is_admin !== 'boolean' && is_admin !== 0 && is_admin !== 1) {
-      return res.status(400).json({
-        success: false,
-        message: 'is_admin must be a boolean or 0/1'
-      });
-    }
+// PUT /api/admin/users/:id/admin - grant or revoke admin rights
+router.put('/users/:id/admin', adminController.setAdminStatus);
 
-    // Prevent admin from removing their own admin status
-    if (userId === req.user.id && !is_admin) {
-      return res.status(400).json({
-        success: false,
-        message: 'Cannot remove your own admin status'
-      });
-    }
-
-    // Update user
-    const db = require('../config/db');
-    const [result] = await db.query(
-      'UPDATE users SET is_admin = ? WHERE id = ?',
-      [is_admin ? 1 : 0, userId]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    const updatedUser = await User.getById(userId);
-    res.json({
-      success: true,
-      message: 'Admin status updated',
-      data: updatedUser
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error updating user',
-      error: error.message
-    });
-  }
-});
-
-// Delete a user (admin only)
-router.delete('/users/:id', authMiddleware, adminMiddleware, async (req, res) => {
-  try {
-    const userId = parseInt(req.params.id);
-
-    // Prevent admin from deleting themselves
-    if (userId === req.user.id) {
-      return res.status(400).json({
-        success: false,
-        message: 'Cannot delete your own account'
-      });
-    }
-
-    const deleted = await User.delete(userId);
-
-    if (!deleted) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    res.json({
-      success: true,
-      message: 'User deleted successfully'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Error deleting user',
-      error: error.message
-    });
-  }
-});
+// DELETE /api/admin/users/:id - delete a user
+router.delete('/users/:id', adminController.deleteUser);
 
 module.exports = router;
