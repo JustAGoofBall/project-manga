@@ -1,10 +1,7 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const { validateRegister, validateLogin } = require('../validators/authValidator');
-
-// JWT Secret - In productie gebruik je een environment variable
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
-const JWT_EXPIRES_IN = '7d'; // Token expires in 7 days
+const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/jwt');
 
 /**
  * Register a new user
